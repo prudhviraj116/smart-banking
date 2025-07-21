@@ -63,6 +63,14 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			backgroundImage: {
+				'banking-gradient': 'var(--banking-gradient)',
+				'success-gradient': 'var(--success-gradient)',
+			},
+			boxShadow: {
+				'card': 'var(--card-shadow)',
+				'glow': 'var(--glow-shadow)',
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
