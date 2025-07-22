@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Shield, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/api";
 
 const Navbar = () => {
   const location = useLocation();
@@ -11,6 +12,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
+    apiClient.logout();
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",

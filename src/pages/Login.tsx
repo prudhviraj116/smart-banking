@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,15 +20,22 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate login - in real app this would call your auth API
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await apiClient.login(email, password);
       toast({
         title: "Login Successful",
         description: "Welcome back to SecureBank!",
       });
       navigate("/dashboard");
-    }, 1000);
+    } catch (error) {
+      toast({
+        title: "Login Failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,30 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { AlertCircle, ArrowRight, CreditCard, Shield } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-
-// Mock accounts data
-const mockAccounts = [
-  {
-    id: "1",
-    accountNumber: "1234-5678-9012-1234",
-    accountType: "Checking",
-    balance: 15420.50,
-  },
-  {
-    id: "2", 
-    accountNumber: "1234-5678-9012-5678",
-    accountType: "Savings",
-    balance: 45280.75,
-  },
-  {
-    id: "3",
-    accountNumber: "1234-5678-9012-9012",
-    accountType: "Investment",
-    balance: 128450.25,
-  },
-];
+import { apiClient } from "@/lib/api";
 
 const Transfer = () => {
+  const [accounts, setAccounts] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     sourceAccount: "",
     targetAccount: "",
@@ -45,7 +25,24 @@ const Transfer = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const selectedAccount = mockAccounts.find(acc => acc.id === formData.sourceAccount);
+  useEffect(() => {
+    loadAccounts();
+  }, []);
+
+  const loadAccounts = async () => {
+    try {
+      const accountsData = await apiClient.getAccounts();
+      setAccounts(accountsData);
+    } catch (error) {
+      toast({
+        title: "Error loading accounts",
+        description: error instanceof Error ? error.message : "Failed to load accounts",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const selectedAccount = accounts.find(acc => acc.id === formData.sourceAccount);
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
@@ -56,8 +53,8 @@ const Transfer = () => {
 
     if (!formData.targetAccount) {
       newErrors.targetAccount = "Please enter a target account number";
-    } else if (formData.targetAccount === selectedAccount?.accountNumber) {
-      newErrors.targetAccount = "Cannot transfer to the same account";
+    } else if (formData.targetAccount.length !== 10) {
+      newErrors.targetAccount = "Account number must be 10 digits";
     }
 
     if (!formData.amount) {
@@ -84,15 +81,29 @@ const Transfer = () => {
 
     setIsLoading(true);
 
-    // Simulate transfer process
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await apiClient.createTransaction({
+        from_account_id: formData.sourceAccount,
+        to_account_number: formData.targetAccount,
+        amount: parseFloat(formData.amount),
+        transaction_type: "transfer",
+        description: formData.note || undefined,
+      });
+
       toast({
         title: "Transfer Successful",
         description: `$${formData.amount} has been transferred successfully.`,
       });
       navigate("/dashboard");
-    }, 2000);
+    } catch (error) {
+      toast({
+        title: "Transfer Failed",
+        description: error instanceof Error ? error.message : "Transfer failed",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -153,13 +164,13 @@ const Transfer = () => {
                         <SelectValue placeholder="Select source account" />
                       </SelectTrigger>
                       <SelectContent className="bg-background border border-border shadow-lg z-50">
-                        {mockAccounts.map((account) => (
+                        {accounts.map((account) => (
                           <SelectItem key={account.id} value={account.id}>
                             <div className="flex items-center justify-between w-full">
                               <div>
-                                <span className="font-medium">{account.accountType}</span>
+                                <span className="font-medium capitalize">{account.account_type}</span>
                                 <span className="text-muted-foreground ml-2">
-                                  ****-{account.accountNumber.slice(-4)}
+                                  ****{account.account_number.slice(-4)}
                                 </span>
                               </div>
                               <span className="text-sm font-semibold ml-4">
@@ -181,10 +192,12 @@ const Transfer = () => {
                     <Input
                       id="targetAccount"
                       type="text"
-                      placeholder="1234-5678-9012-3456"
+                      placeholder="Enter 10-digit account number"
                       value={formData.targetAccount}
                       onChange={(e) => handleInputChange("targetAccount", e.target.value)}
                       className={`h-12 ${errors.targetAccount ? 'border-destructive' : ''}`}
+                      maxLength={10}
+                      pattern="[0-9]{10}"
                     />
                     {errors.targetAccount && (
                       <p className="text-sm text-destructive">{errors.targetAccount}</p>
@@ -248,11 +261,11 @@ const Transfer = () => {
                   <div className="text-2xl font-bold text-accent">
                     {formatCurrency(selectedAccount.balance)}
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedAccount.accountType} Account
+                  <p className="text-sm text-muted-foreground capitalize">
+                    {selectedAccount.account_type} Account
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    ****-{selectedAccount.accountNumber.slice(-4)}
+                    ****{selectedAccount.account_number.slice(-4)}
                   </p>
                 </CardContent>
               </Card>

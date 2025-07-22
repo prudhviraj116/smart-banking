@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,46 +14,67 @@ import {
   EyeOff,
   Plus
 } from "lucide-react";
-
-// Mock data - in real app this would come from your API
-const mockAccounts = [
-  {
-    id: "1",
-    accountNumber: "****-1234",
-    fullAccountNumber: "1234-5678-9012-1234",
-    accountType: "Checking",
-    balance: 15420.50,
-    isDefault: true,
-  },
-  {
-    id: "2", 
-    accountNumber: "****-5678",
-    fullAccountNumber: "1234-5678-9012-5678",
-    accountType: "Savings",
-    balance: 45280.75,
-    isDefault: false,
-  },
-  {
-    id: "3",
-    accountNumber: "****-9012", 
-    fullAccountNumber: "1234-5678-9012-9012",
-    accountType: "Investment",
-    balance: 128450.25,
-    isDefault: false,
-  },
-];
-
-const recentTransactions = [
-  { id: "1", type: "credit", amount: 2500, description: "Salary Deposit", date: "2024-01-15" },
-  { id: "2", type: "debit", amount: 85.50, description: "Grocery Store", date: "2024-01-14" },
-  { id: "3", type: "debit", amount: 1200, description: "Rent Payment", date: "2024-01-13" },
-  { id: "4", type: "credit", amount: 150, description: "Refund", date: "2024-01-12" },
-];
+import { apiClient } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const [showBalances, setShowBalances] = useState(true);
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
   
-  const totalBalance = mockAccounts.reduce((sum, account) => sum + account.balance, 0);
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      const [accountsData] = await Promise.all([
+        apiClient.getAccounts(),
+      ]);
+      setAccounts(accountsData);
+      
+      // Load recent transactions from first account if available
+      if (accountsData.length > 0) {
+        try {
+          const transactions = await apiClient.getTransactions(accountsData[0].id);
+          setRecentTransactions(transactions.slice(0, 4)); // Show only recent 4
+        } catch (error) {
+          // Transactions might not exist yet
+          setRecentTransactions([]);
+        }
+      }
+    } catch (error) {
+      toast({
+        title: "Error loading data",
+        description: error instanceof Error ? error.message : "Failed to load dashboard",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createAccount = async () => {
+    try {
+      await apiClient.createAccount();
+      toast({
+        title: "Account created",
+        description: "Your new account has been created successfully",
+      });
+      loadDashboardData(); // Refresh data
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create account",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);
 
   const formatCurrency = (amount: number) => {
     if (!showBalances) return "••••••";
@@ -72,7 +93,7 @@ const Dashboard = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Welcome back, John Doe</p>
+            <p className="text-muted-foreground mt-1">Welcome back to SecureBank</p>
           </div>
           
           <div className="flex items-center gap-4 mt-4 sm:mt-0">
@@ -105,33 +126,33 @@ const Dashboard = () => {
             <CardContent>
               <div className="text-2xl font-bold">{formatCurrency(totalBalance)}</div>
               <p className="text-xs text-muted-foreground">
-                Across {mockAccounts.length} accounts
+                Across {accounts.length} accounts
               </p>
             </CardContent>
           </Card>
 
           <Card className="shadow-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Monthly Income</CardTitle>
+              <CardTitle className="text-sm font-medium">Active Accounts</CardTitle>
               <TrendingUp className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(2500)}</div>
+              <div className="text-2xl font-bold">{accounts.length}</div>
               <p className="text-xs text-muted-foreground">
-                +8% from last month
+                Banking accounts
               </p>
             </CardContent>
           </Card>
 
           <Card className="shadow-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Monthly Spending</CardTitle>
-              <ArrowDownLeft className="h-4 w-4 text-destructive" />
+              <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
+              <ArrowDownLeft className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(1285.50)}</div>
+              <div className="text-2xl font-bold">{recentTransactions.length}</div>
               <p className="text-xs text-muted-foreground">
-                -5% from last month
+                Recent transactions
               </p>
             </CardContent>
           </Card>
@@ -141,46 +162,67 @@ const Dashboard = () => {
           {/* Accounts */}
           <Card className="shadow-card">
             <CardHeader>
-              <CardTitle>Your Accounts</CardTitle>
-              <CardDescription>
-                Manage your bank accounts and balances
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Your Accounts</CardTitle>
+                  <CardDescription>
+                    Manage your bank accounts and balances
+                  </CardDescription>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="ml-auto"
+                  onClick={createAccount}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Account
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {mockAccounts.map((account) => (
-                <div 
-                  key={account.id}
-                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-secondary/50 transition-colors"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <CreditCard className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium">{account.accountType}</p>
-                        {account.isDefault && (
-                          <Badge variant="secondary" className="text-xs">Default</Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">{account.accountNumber}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold">{formatCurrency(account.balance)}</p>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      asChild
-                      className="text-xs text-muted-foreground hover:text-primary"
-                    >
-                      <Link to={`/transactions?account=${account.id}`}>
-                        View Details
-                      </Link>
-                    </Button>
-                  </div>
+              {loading ? (
+                <div className="text-center py-8 text-muted-foreground">Loading accounts...</div>
+              ) : accounts.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No accounts found. Create your first account to get started.
                 </div>
-              ))}
+              ) : (
+                accounts.map((account) => (
+                  <div 
+                    key={account.id}
+                    className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-secondary/50 transition-colors"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <CreditCard className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium capitalize">{account.account_type}</p>
+                          {account.balance > 0 && (
+                            <Badge variant="secondary" className="text-xs">Active</Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">****{account.account_number.slice(-4)}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold">{formatCurrency(account.balance)}</p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        asChild
+                        className="text-xs text-muted-foreground hover:text-primary"
+                      >
+                        <Link to={`/transactions?account=${account.id}`}>
+                          View Details
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
             </CardContent>
           </Card>
 
@@ -200,35 +242,52 @@ const Dashboard = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {recentTransactions.map((transaction) => (
-                <div 
-                  key={transaction.id}
-                  className="flex items-center justify-between p-4 border border-border rounded-lg"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className={`p-2 rounded-lg ${
-                      transaction.type === 'credit' 
-                        ? 'bg-accent/10 text-accent' 
-                        : 'bg-destructive/10 text-destructive'
-                    }`}>
-                      {transaction.type === 'credit' ? (
-                        <ArrowUpRight className="w-4 h-4" />
-                      ) : (
-                        <ArrowDownLeft className="w-4 h-4" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium">{transaction.description}</p>
-                      <p className="text-sm text-muted-foreground">{transaction.date}</p>
-                    </div>
-                  </div>
-                  <div className={`font-semibold ${
-                    transaction.type === 'credit' ? 'text-accent' : 'text-destructive'
-                  }`}>
-                    {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
-                  </div>
+              {loading ? (
+                <div className="text-center py-8 text-muted-foreground">Loading transactions...</div>
+              ) : recentTransactions.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No recent transactions found.
                 </div>
-              ))}
+              ) : (
+                recentTransactions.map((transaction) => {
+                  const isCredit = transaction.transaction_type === "deposit" || 
+                    (transaction.transaction_type === "transfer" && transaction.to_account_id);
+                  
+                  return (
+                    <div 
+                      key={transaction.id}
+                      className="flex items-center justify-between p-4 border border-border rounded-lg"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className={`p-2 rounded-lg ${
+                          isCredit
+                            ? 'bg-accent/10 text-accent' 
+                            : 'bg-destructive/10 text-destructive'
+                        }`}>
+                          {isCredit ? (
+                            <ArrowUpRight className="w-4 h-4" />
+                          ) : (
+                            <ArrowDownLeft className="w-4 h-4" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium">
+                            {transaction.description || `${transaction.transaction_type} transaction`}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(transaction.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className={`font-semibold ${
+                        isCredit ? 'text-accent' : 'text-destructive'
+                      }`}>
+                        {isCredit ? '+' : '-'}{formatCurrency(transaction.amount)}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </CardContent>
           </Card>
         </div>

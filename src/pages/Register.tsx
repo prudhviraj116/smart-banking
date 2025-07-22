@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff, Shield, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/api";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -41,15 +42,22 @@ const Register = () => {
 
     setIsLoading(true);
 
-    // Simulate registration - in real app this would call your auth API
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await apiClient.register(formData.email, formData.password, formData.username);
       toast({
         title: "Account Created Successfully",
         description: "Welcome to SecureBank! Please sign in to continue.",
       });
       navigate("/login");
-    }, 1000);
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

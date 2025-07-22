@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,134 +15,99 @@ import {
   Calendar,
   CreditCard
 } from "lucide-react";
-
-// Mock accounts data
-const mockAccounts = [
-  {
-    id: "1",
-    accountNumber: "****-1234",
-    accountType: "Checking",
-    balance: 15420.50,
-  },
-  {
-    id: "2", 
-    accountNumber: "****-5678",
-    accountType: "Savings",
-    balance: 45280.75,
-  },
-  {
-    id: "3",
-    accountNumber: "****-9012",
-    accountType: "Investment",
-    balance: 128450.25,
-  },
-];
-
-// Mock transactions data
-const mockTransactions = [
-  {
-    id: "1",
-    accountId: "1",
-    type: "credit",
-    amount: 2500.00,
-    description: "Salary Deposit",
-    note: "Monthly salary from ABC Corp",
-    timestamp: "2024-01-15T09:00:00Z",
-    category: "Income",
-    status: "completed"
-  },
-  {
-    id: "2",
-    accountId: "1", 
-    type: "debit",
-    amount: 85.50,
-    description: "Grocery Store",
-    note: "Weekly groceries at SuperMart",
-    timestamp: "2024-01-14T16:30:00Z",
-    category: "Shopping",
-    status: "completed"
-  },
-  {
-    id: "3",
-    accountId: "1",
-    type: "debit", 
-    amount: 1200.00,
-    description: "Rent Payment",
-    note: "Monthly rent for apartment",
-    timestamp: "2024-01-13T10:00:00Z",
-    category: "Bills",
-    status: "completed"
-  },
-  {
-    id: "4",
-    accountId: "2",
-    type: "credit",
-    amount: 150.00,
-    description: "Refund",
-    note: "Refund for returned item",
-    timestamp: "2024-01-12T14:20:00Z",
-    category: "Refund",
-    status: "completed"
-  },
-  {
-    id: "5",
-    accountId: "2",
-    type: "debit",
-    amount: 500.00,
-    description: "Transfer to Checking",
-    note: "Internal transfer",
-    timestamp: "2024-01-11T11:15:00Z",
-    category: "Transfer",
-    status: "completed"
-  },
-  {
-    id: "6",
-    accountId: "3",
-    type: "credit",
-    amount: 1000.00,
-    description: "Investment Dividend",
-    note: "Quarterly dividend payment",
-    timestamp: "2024-01-10T08:00:00Z",
-    category: "Investment",
-    status: "completed"
-  },
-  {
-    id: "7",
-    accountId: "1",
-    type: "debit",
-    amount: 75.25,
-    description: "Gas Station",
-    note: "Fuel purchase",
-    timestamp: "2024-01-09T18:45:00Z",
-    category: "Transportation",
-    status: "completed"
-  },
-  {
-    id: "8",
-    accountId: "1",
-    type: "debit",
-    amount: 45.00,
-    description: "Restaurant",
-    note: "Dinner at Italian Bistro",
-    timestamp: "2024-01-08T19:30:00Z",
-    category: "Dining",
-    status: "completed"
-  },
-];
+import { apiClient } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const Transactions = () => {
   const [searchParams] = useSearchParams();
-  const [selectedAccount, setSelectedAccount] = useState(searchParams.get("account") || "all");
+  const { toast } = useToast();
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [selectedAccount, setSelectedAccount] = useState(searchParams.get("account") || "");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [loading, setLoading] = useState(false);
 
-  const filteredTransactions = mockTransactions.filter(transaction => {
-    const matchesAccount = selectedAccount === "all" || transaction.accountId === selectedAccount;
-    const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         transaction.note.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" || transaction.type === filterType;
-    
-    return matchesAccount && matchesSearch && matchesType;
+  useEffect(() => {
+    loadAccounts();
+  }, []);
+
+  useEffect(() => {
+    if (selectedAccount && selectedAccount !== "all") {
+      loadTransactions(selectedAccount);
+    } else if (selectedAccount === "all" && accounts.length > 0) {
+      loadAllTransactions();
+    }
+  }, [selectedAccount, accounts]);
+
+  const loadAccounts = async () => {
+    try {
+      const accountsData = await apiClient.getAccounts();
+      setAccounts(accountsData);
+      if (accountsData.length > 0 && !selectedAccount) {
+        setSelectedAccount(accountsData[0].id);
+      }
+    } catch (error) {
+      toast({
+        title: "Error loading accounts",
+        description: error instanceof Error ? error.message : "Failed to load accounts",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const loadTransactions = async (accountId: string) => {
+    try {
+      setLoading(true);
+      const transactionsData = await apiClient.getTransactions(accountId);
+      setTransactions(transactionsData);
+    } catch (error) {
+      toast({
+        title: "Error loading transactions",
+        description: error instanceof Error ? error.message : "Failed to load transactions",
+        variant: "destructive",
+      });
+      setTransactions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadAllTransactions = async () => {
+    try {
+      setLoading(true);
+      const allTransactions = [];
+      for (const account of accounts) {
+        try {
+          const transactionsData = await apiClient.getTransactions(account.id);
+          allTransactions.push(...transactionsData);
+        } catch (error) {
+          // Continue if one account fails
+        }
+      }
+      // Sort by date desc
+      allTransactions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      setTransactions(allTransactions);
+    } catch (error) {
+      toast({
+        title: "Error loading transactions",
+        description: error instanceof Error ? error.message : "Failed to load transactions",
+        variant: "destructive",
+      });
+      setTransactions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredTransactions = transactions.filter((transaction) => {
+    const matchesSearch = (transaction.description || "").toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = filterType === "all" || 
+      (filterType === "credit" && (transaction.transaction_type === "deposit" || 
+        (transaction.transaction_type === "transfer" && selectedAccount === transaction.to_account_id))) ||
+      (filterType === "debit" && (transaction.transaction_type === "withdrawal" || 
+        (transaction.transaction_type === "transfer" && selectedAccount === transaction.from_account_id)));
+    return matchesSearch && matchesType;
   });
 
   const formatCurrency = (amount: number) => {
@@ -162,23 +127,29 @@ const Transactions = () => {
     });
   };
 
-  const getTransactionIcon = (type: string) => {
-    return type === "credit" ? (
+  const getTransactionIcon = (transaction: any) => {
+    const isCredit = transaction.transaction_type === "deposit" || 
+      (transaction.transaction_type === "transfer" && selectedAccount === transaction.to_account_id);
+    return isCredit ? (
       <ArrowUpRight className="w-4 h-4" />
     ) : (
       <ArrowDownLeft className="w-4 h-4" />
     );
   };
 
-  const getTransactionColor = (type: string) => {
-    return type === "credit" ? "text-accent" : "text-destructive";
+  const getTransactionColor = (transaction: any) => {
+    const isCredit = transaction.transaction_type === "deposit" || 
+      (transaction.transaction_type === "transfer" && selectedAccount === transaction.to_account_id);
+    return isCredit ? "text-accent" : "text-destructive";
   };
 
-  const getTransactionBg = (type: string) => {
-    return type === "credit" ? "bg-accent/10" : "bg-destructive/10";
+  const getTransactionBg = (transaction: any) => {
+    const isCredit = transaction.transaction_type === "deposit" || 
+      (transaction.transaction_type === "transfer" && selectedAccount === transaction.to_account_id);
+    return isCredit ? "bg-accent/10" : "bg-destructive/10";
   };
 
-  const selectedAccountData = mockAccounts.find(acc => acc.id === selectedAccount);
+  const selectedAccountData = accounts.find(acc => acc.id === selectedAccount);
 
   return (
     <div className="min-h-screen bg-secondary/30">
@@ -206,7 +177,7 @@ const Transactions = () => {
         </div>
 
         {/* Account Summary */}
-        {selectedAccountData && (
+        {selectedAccountData && selectedAccount !== "all" && (
           <Card className="shadow-card mb-6">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -215,8 +186,8 @@ const Transactions = () => {
                     <CreditCard className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold">{selectedAccountData.accountType} Account</h3>
-                    <p className="text-muted-foreground">{selectedAccountData.accountNumber}</p>
+                    <h3 className="text-lg font-semibold capitalize">{selectedAccountData.account_type} Account</h3>
+                    <p className="text-muted-foreground">****{selectedAccountData.account_number.slice(-4)}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -244,9 +215,9 @@ const Transactions = () => {
                   </SelectTrigger>
                   <SelectContent className="bg-background border border-border shadow-lg z-50">
                     <SelectItem value="all">All Accounts</SelectItem>
-                    {mockAccounts.map((account) => (
+                    {accounts.map((account) => (
                       <SelectItem key={account.id} value={account.id}>
-                        {account.accountType} ({account.accountNumber})
+                        {account.account_type} (****{account.account_number.slice(-4)})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -312,51 +283,61 @@ const Transactions = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {filteredTransactions.length === 0 ? (
-                <div className="text-center py-8">
+              {loading ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Loading transactions...</p>
+                </div>
+              ) : filteredTransactions.length === 0 ? (
+                <div className="text-center py-12">
                   <p className="text-muted-foreground">No transactions found matching your criteria.</p>
                 </div>
               ) : (
                 filteredTransactions.map((transaction) => {
-                  const account = mockAccounts.find(acc => acc.id === transaction.accountId);
+                  const isCredit = transaction.transaction_type === "deposit" || 
+                    (transaction.transaction_type === "transfer" && selectedAccount === transaction.to_account_id);
+                  
                   return (
                     <div 
                       key={transaction.id}
                       className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-secondary/50 transition-colors"
                     >
                       <div className="flex items-center space-x-4">
-                        <div className={`p-2 rounded-lg ${getTransactionBg(transaction.type)} ${getTransactionColor(transaction.type)}`}>
-                          {getTransactionIcon(transaction.type)}
+                        <div className={`p-2 rounded-lg ${getTransactionBg(transaction)} ${getTransactionColor(transaction)}`}>
+                          {getTransactionIcon(transaction)}
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="font-medium">{transaction.description}</p>
-                            <Badge variant="outline" className="text-xs">
-                              {transaction.category}
+                            <p className="font-medium">
+                              {transaction.description || `${transaction.transaction_type} transaction`}
+                            </p>
+                            <Badge variant="outline" className="text-xs capitalize">
+                              {transaction.transaction_type}
                             </Badge>
                           </div>
-                          <p className="text-sm text-muted-foreground">{transaction.note}</p>
                           <div className="flex items-center gap-4 mt-1">
                             <p className="text-xs text-muted-foreground">
-                              {formatDate(transaction.timestamp)}
+                              {formatDate(transaction.created_at)}
                             </p>
-                            {account && (
+                            {transaction.transaction_type === "transfer" && (
                               <p className="text-xs text-muted-foreground">
-                                {account.accountType} ({account.accountNumber})
+                                {selectedAccount === transaction.from_account_id 
+                                  ? `To: ****${transaction.to_account?.account_number?.slice(-4) || 'Unknown'}`
+                                  : `From: ****${transaction.from_account?.account_number?.slice(-4) || 'Unknown'}`
+                                }
                               </p>
                             )}
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className={`font-semibold ${getTransactionColor(transaction.type)}`}>
-                          {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                        <div className={`font-semibold ${getTransactionColor(transaction)}`}>
+                          {isCredit ? '+' : '-'}{formatCurrency(transaction.amount)}
                         </div>
                         <Badge 
                           variant={transaction.status === 'completed' ? 'default' : 'secondary'}
                           className="text-xs mt-1"
                         >
-                          {transaction.status}
+                          {transaction.status || "Completed"}
                         </Badge>
                       </div>
                     </div>
