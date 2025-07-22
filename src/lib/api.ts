@@ -10,7 +10,7 @@ class ApiClient {
 
   private async request(endpoint: string, options: RequestInit = {}) {
     const token = localStorage.getItem('supabase_token');
-    
+
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
@@ -24,10 +24,17 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'An error occurred');
+      // Try parse JSON error first, fallback to text
+      try {
+        const error = await response.json();
+        throw new Error(error.error || 'An error occurred');
+      } catch {
+        const text = await response.text();
+        throw new Error(text || 'An error occurred');
+      }
     }
 
+    // Parse JSON on success
     return response.json();
   }
 
@@ -43,8 +50,13 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error_description || 'Login failed');
+      try {
+        const error = await response.json();
+        throw new Error(error.error_description || 'Login failed');
+      } catch {
+        const text = await response.text();
+        throw new Error(text || 'Login failed');
+      }
     }
 
     const data = await response.json();
@@ -60,12 +72,15 @@ class ApiClient {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_ANON_KEY,
       },
-      body: JSON.stringify({ 
-        email, 
+      body: JSON.stringify({
+        email,
         password,
-        data: { username }
+        options: {
+          data: { username },
+        },
       }),
     });
+
     let data;
     try {
       data = await response.json();
@@ -73,12 +88,20 @@ class ApiClient {
       const text = await response.text();
       throw new Error(`Unexpected error: ${text}`);
     }
+
     if (!response.ok) {
-      //const error = await response.json();//
       throw new Error(data.error_description || data.error || 'Registration failed');
     }
 
-    return response.json();
+    // Save token and user to localStorage if available
+    if (data.access_token) {
+      localStorage.setItem('supabase_token', data.access_token);
+    }
+    if (data.user) {
+      localStorage.setItem('supabase_user', JSON.stringify(data.user));
+    }
+
+    return data;
   }
 
   logout() {
