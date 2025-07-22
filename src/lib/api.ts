@@ -66,10 +66,16 @@ class ApiClient {
         data: { username }
       }),
     });
-
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      const text = await response.text();
+      throw new Error(`Unexpected error: ${text}`);
+    }
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error_description || 'Registration failed');
+      //const error = await response.json();//
+      throw new Error(data.error_description || data.error || 'Registration failed');
     }
 
     return response.json();
