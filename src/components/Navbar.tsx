@@ -30,8 +30,10 @@ const Navbar = () => {
 
   const navItems = [
     { path: "/dashboard", label: "Dashboard" },
-    { path: "/transfer", label: "Transfer Funds" },
+    { path: "/transfer", label: "Transfer" },
     { path: "/transactions", label: "Transactions" },
+    { path: "/profile", label: "Profile" },
+    { path: "/settings", label: "Settings" },
   ];
 
   return (
