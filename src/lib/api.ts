@@ -1,153 +1,197 @@
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface User {
+  id: string;
+  email: string;
+  username?: string;
+}
+
+interface Account {
+  id: string;
+  account_number: string;
+  account_type: string;
+  balance: number;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Transaction {
+  id: string;
+  from_account_id?: string;
+  to_account_id?: string;
+  amount: number;
+  transaction_type: string;
+  description?: string;
+  created_at: string;
+  status: string;
+}
 
 class ApiClient {
-  private baseUrl: string;
-
-  constructor() {
-    this.baseUrl = `${SUPABASE_URL}/functions/v1`;
-  }
-
-  private async request(endpoint: string, options: RequestInit = {}) {
-    const token = localStorage.getItem('supabase_token');
-
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      'apikey': SUPABASE_ANON_KEY,
-      ...options.headers,
-    };
-
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      ...options,
-      headers,
-    });
-
-    if (!response.ok) {
-      // Try parse JSON error first, fallback to text
-      try {
-        const error = await response.json();
-        throw new Error(error.error || 'An error occurred');
-      } catch {
-        const text = await response.text();
-        throw new Error(text || 'An error occurred');
-      }
-    }
-
-    // Parse JSON on success
-    return response.json();
-  }
-
-  // Auth methods (using Supabase Auth directly)
   async login(email: string, password: string) {
-    const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_ANON_KEY,
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (!response.ok) {
-      try {
-        const error = await response.json();
-        throw new Error(error.error_description || 'Login failed');
-      } catch {
-        const text = await response.text();
-        throw new Error(text || 'Login failed');
-      }
+      if (error) throw error;
+
+      return data;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
     }
-
-    const data = await response.json();
-    localStorage.setItem('supabase_token', data.access_token);
-    localStorage.setItem('supabase_user', JSON.stringify(data.user));
-    return data;
   }
 
   async register(email: string, password: string, username?: string) {
-    const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_ANON_KEY,
-      },
-      body: JSON.stringify({
+    try {
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { username },
+          data: {
+            full_name: username,
+          },
         },
-      }),
-    });
+      });
 
-    let data;
-    try {
-      const text = await response.text();
-      data = text ? JSON.parse(text) : {};
-    } catch {
-      throw new Error('Invalid response format');
-    }
+      if (error) throw error;
 
-    if (!response.ok) {
-      throw new Error(data.error_description || data.error || 'Registration failed');
+      return data;
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
     }
+  }
 
-    // Save token and user to localStorage if available
-    if (data.access_token) {
-      localStorage.setItem('supabase_token', data.access_token);
-    }
-    if (data.user) {
-      localStorage.setItem('supabase_user', JSON.stringify(data.user));
-    }
+  async logout() {
+    await supabase.auth.signOut();
+  }
 
+  async getAccounts(): Promise<Account[]> {
+    const { data, error } = await supabase
+      .from('accounts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async createAccount(accountType: string): Promise<Account> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    // Generate account number
+    const { data: accountNumber, error: rpcError } = await supabase
+      .rpc('generate_account_number');
+
+    if (rpcError) throw rpcError;
+
+    const { data, error } = await supabase
+      .from('accounts')
+      .insert({
+        user_id: user.id,
+        account_number: accountNumber,
+        account_type: accountType,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
     return data;
   }
 
-  logout() {
-    localStorage.removeItem('supabase_token');
-    localStorage.removeItem('supabase_user');
-  }
+  async getTransactions(accountId?: string): Promise<Transaction[]> {
+    let query = supabase
+      .from('transactions')
+      .select(`
+        *,
+        from_account:accounts!from_account_id(account_number),
+        to_account:accounts!to_account_id(account_number)
+      `)
+      .order('created_at', { ascending: false });
 
-  // Account methods
-  async getAccounts() {
-    return this.request('/accounts');
-  }
+    if (accountId) {
+      query = query.or(`from_account_id.eq.${accountId},to_account_id.eq.${accountId}`);
+    }
 
-  async createAccount(accountType: string = 'checking') {
-    return this.request('/accounts', {
-      method: 'POST',
-      body: JSON.stringify({ account_type: accountType }),
-    });
-  }
+    const { data, error } = await query;
 
-  // Transaction methods
-  async getTransactions(accountId: string) {
-    return this.request(`/transactions/${accountId}`);
+    if (error) throw error;
+    return data || [];
   }
 
   async createTransaction(transaction: {
-    from_account_id?: string;
-    to_account_id?: string;
-    to_account_number?: string;
+    fromAccountId?: string;
+    toAccountNumber?: string;
     amount: number;
-    transaction_type: 'deposit' | 'withdrawal' | 'transfer';
+    type: string;
     description?: string;
-  }) {
-    return this.request('/transactions', {
-      method: 'POST',
-      body: JSON.stringify(transaction),
+  }): Promise<Transaction> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    let toAccountId = null;
+
+    // If transferring to another account, find the target account by number
+    if (transaction.toAccountNumber && transaction.type === 'transfer') {
+      const { data: targetAccount, error: accountError } = await supabase
+        .from('accounts')
+        .select('id')
+        .eq('account_number', transaction.toAccountNumber)
+        .single();
+
+      if (accountError || !targetAccount) {
+        throw new Error('Target account not found');
+      }
+      toAccountId = targetAccount.id;
+    }
+
+    // Use the process_transaction function for proper balance updates
+    const { data, error } = await supabase.rpc('process_transaction', {
+      p_from_account_id: transaction.fromAccountId || null,
+      p_to_account_id: toAccountId,
+      p_amount: transaction.amount,
+      p_transaction_type: transaction.type,
+      p_description: transaction.description || null,
     });
+
+    if (error) throw error;
+
+    const result = data as { success: boolean; error?: string; transaction_id?: string };
+
+    if (!result.success) {
+      throw new Error(result.error || 'Transaction failed');
+    }
+
+    // Fetch the created transaction
+    const { data: transactionData, error: fetchError } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('id', result.transaction_id)
+      .single();
+
+    if (fetchError) throw fetchError;
+    return transactionData;
   }
 
-  // Helper methods
-  isAuthenticated() {
-    return !!localStorage.getItem('supabase_token');
+  async isAuthenticated(): Promise<boolean> {
+    const { data: { session } } = await supabase.auth.getSession();
+    return !!session;
   }
 
-  getCurrentUser() {
-    const user = localStorage.getItem('supabase_user');
-    return user ? JSON.parse(user) : null;
+  async getCurrentUser(): Promise<User | null> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    return {
+      id: user.id,
+      email: user.email || '',
+      username: user.user_metadata?.full_name,
+    };
   }
 }
 

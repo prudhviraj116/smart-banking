@@ -59,7 +59,7 @@ const Dashboard = () => {
 
   const createAccount = async () => {
     try {
-      await apiClient.createAccount();
+      await apiClient.createAccount('checking');
       toast({
         title: "Account created",
         description: "Your new account has been created successfully",

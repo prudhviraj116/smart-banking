@@ -83,10 +83,10 @@ const Transfer = () => {
 
     try {
       await apiClient.createTransaction({
-        from_account_id: formData.sourceAccount,
-        to_account_number: formData.targetAccount,
+        fromAccountId: formData.sourceAccount,
+        toAccountNumber: formData.targetAccount,
         amount: parseFloat(formData.amount),
-        transaction_type: "transfer",
+        type: "transfer",
         description: formData.note || undefined,
       });
 
