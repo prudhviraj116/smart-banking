@@ -83,10 +83,10 @@ class ApiClient {
 
     let data;
     try {
-      data = await response.json();
-    } catch {
       const text = await response.text();
-      throw new Error(`Unexpected error: ${text}`);
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      throw new Error('Invalid response format');
     }
 
     if (!response.ok) {
