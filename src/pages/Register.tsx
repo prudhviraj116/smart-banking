@@ -43,7 +43,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      await apiClient.register({email:formData.email, password: formData.password, username: formData.username});
+      await apiClient.register(formData.email, formData.password, formData.username);
       toast({
         title: "Account Created Successfully",
         description: "Welcome to SecureBank! Please sign in to continue.",
