@@ -19,6 +19,7 @@ export type Database = {
           account_number: string
           account_type: string
           balance: number
+          can_create_account: boolean | null
           created_at: string
           id: string
           updated_at: string
@@ -28,6 +29,7 @@ export type Database = {
           account_number: string
           account_type?: string
           balance?: number
+          can_create_account?: boolean | null
           created_at?: string
           id?: string
           updated_at?: string
@@ -37,6 +39,7 @@ export type Database = {
           account_number?: string
           account_type?: string
           balance?: number
+          can_create_account?: boolean | null
           created_at?: string
           id?: string
           updated_at?: string
@@ -44,28 +47,88 @@ export type Database = {
         }
         Relationships: []
       }
+      mobile_verifications: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          is_verified: boolean | null
+          mobile_number: string
+          otp_code: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          is_verified?: boolean | null
+          mobile_number: string
+          otp_code: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          is_verified?: boolean | null
+          mobile_number?: string
+          otp_code?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          address: string | null
           created_at: string
+          date_of_birth: string | null
           email: string | null
           full_name: string | null
+          gender: string | null
           id: string
+          is_email_verified: boolean | null
+          is_mobile_verified: boolean | null
+          kyc_status: string | null
+          kyc_submitted_at: string | null
+          kyc_verified_at: string | null
+          mobile_number: string | null
           phone: string | null
           updated_at: string
         }
         Insert: {
+          address?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email?: string | null
           full_name?: string | null
+          gender?: string | null
           id: string
+          is_email_verified?: boolean | null
+          is_mobile_verified?: boolean | null
+          kyc_status?: string | null
+          kyc_submitted_at?: string | null
+          kyc_verified_at?: string | null
+          mobile_number?: string | null
           phone?: string | null
           updated_at?: string
         }
         Update: {
+          address?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email?: string | null
           full_name?: string | null
+          gender?: string | null
           id?: string
+          is_email_verified?: boolean | null
+          is_mobile_verified?: boolean | null
+          kyc_status?: string | null
+          kyc_submitted_at?: string | null
+          kyc_verified_at?: string | null
+          mobile_number?: string | null
           phone?: string | null
           updated_at?: string
         }
