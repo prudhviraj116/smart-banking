@@ -29,7 +29,7 @@ interface Transaction {
 }
 
 class ApiClient {
-  async login(email: string, password: string) {
+  async login(email: string, password: string): Promise<{ user: any, needsVerification: boolean }> {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -38,19 +38,31 @@ class ApiClient {
 
       if (error) throw error;
 
-      return data;
+      if (!data.user) {
+        throw new Error('Login failed');
+      }
+
+      // Check if email is verified
+      if (!data.user.email_confirmed_at) {
+        return { user: data.user, needsVerification: true };
+      }
+
+      return { user: data.user, needsVerification: false };
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     }
   }
 
-  async register(email: string, password: string, username?: string) {
+  async register(email: string, password: string, username?: string): Promise<{ needsVerification: boolean }> {
     try {
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             full_name: username,
           },
@@ -59,9 +71,33 @@ class ApiClient {
 
       if (error) throw error;
 
-      return data;
+      if (!data.user) {
+        throw new Error('Registration failed');
+      }
+
+      // Return whether email verification is needed
+      return { needsVerification: !data.user.email_confirmed_at };
     } catch (error) {
       console.error('Registration error:', error);
+      throw error;
+    }
+  }
+
+  async resendVerification(email: string): Promise<void> {
+    try {
+      const redirectUrl = `${window.location.origin}/dashboard`;
+      
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: redirectUrl,
+        },
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Resend verification error:', error);
       throw error;
     }
   }

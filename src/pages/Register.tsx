@@ -43,11 +43,20 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      await apiClient.register(formData.email, formData.password, formData.username);
-      toast({
-        title: "Account Created Successfully",
-        description: "Welcome to SecureBank! Please sign in to continue.",
-      });
+      const { needsVerification } = await apiClient.register(formData.email, formData.password, formData.username);
+      
+      if (needsVerification) {
+        toast({
+          title: "Registration Successful",
+          description: "Please check your email and click the verification link to complete your registration.",
+        });
+      } else {
+        toast({
+          title: "Registration Successful", 
+          description: "Welcome to SecureBank! You can now log in.",
+        });
+      }
+      
       navigate("/login");
     } catch (error) {
       toast({

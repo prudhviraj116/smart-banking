@@ -7,12 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiClient } from "@/lib/api";
+import { VerificationPrompt } from "@/components/VerificationPrompt";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -21,7 +23,13 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      await apiClient.login(email, password);
+      const { user, needsVerification } = await apiClient.login(email, password);
+      
+      if (needsVerification) {
+        setShowVerificationPrompt(true);
+        return;
+      }
+
       toast({
         title: "Login Successful",
         description: "Welcome back to SecureBank!",
@@ -37,6 +45,27 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
+  if (showVerificationPrompt) {
+    return (
+      <div className="min-h-screen bg-banking-gradient flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-glow mb-4">
+              <Shield className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2">SecureBank</h1>
+            <p className="text-blue-100">Your trusted banking partner</p>
+          </div>
+
+          <VerificationPrompt 
+            email={email} 
+            onBack={() => setShowVerificationPrompt(false)} 
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-banking-gradient flex items-center justify-center p-4">
