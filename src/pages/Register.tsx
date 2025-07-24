@@ -46,18 +46,18 @@ const Register = () => {
       const { needsVerification } = await apiClient.register(formData.email, formData.password, formData.username);
       
       if (needsVerification) {
-        toast({
-          title: "Registration Successful",
-          description: "Please check your email and click the verification link to complete your registration.",
-        });
-      } else {
-        toast({
-          title: "Registration Successful", 
-          description: "Welcome to SecureBank! You can now log in.",
-        });
-      }
-      
-      navigate("/login");
+      toast({
+        title: "Account Created",
+        description: "Please complete your KYC verification to access your account.",
+      });
+    } else {
+      toast({
+        title: "Account Created",
+        description: "Please complete your KYC verification to access your account.",
+      });
+    }
+    
+    navigate("/kyc");
     } catch (error) {
       toast({
         title: "Registration Failed",

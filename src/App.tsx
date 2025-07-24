@@ -12,6 +12,7 @@ import Transactions from "./pages/Transactions";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import KYC from "./pages/KYC";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/kyc" element={<KYC />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/transfer" element={<Transfer />} />
           <Route path="/transactions" element={<Transactions />} />

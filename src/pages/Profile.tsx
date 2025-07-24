@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Phone, Mail, Calendar, Shield } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { User, Phone, Mail, Calendar, Shield, CheckCircle, Clock, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
@@ -14,6 +15,13 @@ const Profile = () => {
     full_name: "",
     email: "",
     phone: "",
+    mobile_number: "",
+    date_of_birth: "",
+    gender: "",
+    address: "",
+    is_email_verified: false,
+    is_mobile_verified: false,
+    kyc_status: "pending",
   });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -39,6 +47,13 @@ const Profile = () => {
           full_name: data.full_name || "",
           email: data.email || user.email || "",
           phone: data.phone || "",
+          mobile_number: data.mobile_number || "",
+          date_of_birth: data.date_of_birth || "",
+          gender: data.gender || "",
+          address: data.address || "",
+          is_email_verified: data.is_email_verified || false,
+          is_mobile_verified: data.is_mobile_verified || false,
+          kyc_status: data.kyc_status || "pending",
         });
       } else {
         // If no profile exists, create one
@@ -46,6 +61,13 @@ const Profile = () => {
           full_name: user.user_metadata?.full_name || "",
           email: user.email || "",
           phone: "",
+          mobile_number: "",
+          date_of_birth: "",
+          gender: "",
+          address: "",
+          is_email_verified: false,
+          is_mobile_verified: false,
+          kyc_status: "pending",
         });
       }
     } catch (error) {
@@ -122,18 +144,45 @@ const Profile = () => {
                 <CardDescription>{profile.email}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-sm">
                   <Mail className="w-4 h-4" />
-                  <span>Email Verified</span>
+                  <span>Email</span>
+                  <Badge variant={profile.is_email_verified ? "default" : "secondary"}>
+                    {profile.is_email_verified ? "Verified" : "Pending"}
+                  </Badge>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-sm">
+                  <Phone className="w-4 h-4" />
+                  <span>Mobile</span>
+                  <Badge variant={profile.is_mobile_verified ? "default" : "secondary"}>
+                    {profile.is_mobile_verified ? "Verified" : "Pending"}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
                   <Shield className="w-4 h-4" />
-                  <span>Account Secured</span>
+                  <span>KYC Status</span>
+                  <Badge 
+                    variant={
+                      profile.kyc_status === "verified" ? "default" :
+                      profile.kyc_status === "submitted" ? "outline" : "secondary"
+                    }
+                  >
+                    {profile.kyc_status === "verified" ? "Verified" :
+                     profile.kyc_status === "submitted" ? "Under Review" : "Pending"}
+                  </Badge>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="w-4 h-4" />
-                  <span>Member since today</span>
-                </div>
+                {profile.date_of_birth && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    <span>Born {new Date(profile.date_of_birth).toLocaleDateString()}</span>
+                  </div>
+                )}
+                {profile.address && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <MapPin className="w-4 h-4" />
+                    <span className="truncate">{profile.address}</span>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -177,7 +226,7 @@ const Profile = () => {
                       </div>
                     </div>
 
-                    <div className="space-y-2 md:col-span-2">
+                    <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number</Label>
                       <div className="relative">
                         <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -190,6 +239,28 @@ const Profile = () => {
                           className="pl-10"
                         />
                       </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="mobile_number">Mobile Number</Label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="mobile_number"
+                          type="tel"
+                          placeholder="Enter your mobile number"
+                          value={profile.mobile_number}
+                          onChange={(e) => setProfile({ ...profile, mobile_number: e.target.value })}
+                          className="pl-10"
+                          disabled={profile.is_mobile_verified}
+                        />
+                      </div>
+                      {profile.is_mobile_verified && (
+                        <p className="text-xs text-green-600 flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" />
+                          Mobile number verified
+                        </p>
+                      )}
                     </div>
                   </div>
 

@@ -8,6 +8,7 @@ import { Eye, EyeOff, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiClient } from "@/lib/api";
 import { VerificationPrompt } from "@/components/VerificationPrompt";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -28,6 +29,25 @@ const Login = () => {
       if (needsVerification) {
         setShowVerificationPrompt(true);
         return;
+      }
+
+      // Check if user has completed KYC
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_email_verified, is_mobile_verified, kyc_status')
+          .eq('id', currentUser.id)
+          .single();
+
+        if (!profile?.is_email_verified || !profile?.is_mobile_verified) {
+          toast({
+            title: "KYC Required",
+            description: "Please complete your KYC verification to access your account.",
+          });
+          navigate("/kyc");
+          return;
+        }
       }
 
       toast({
