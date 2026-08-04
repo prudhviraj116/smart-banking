@@ -13,12 +13,14 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import KYC from "./pages/KYC";
+import AmbientBackground from "./components/AmbientBackground";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <AmbientBackground />
       <Toaster />
       <Sonner />
       <BrowserRouter>
