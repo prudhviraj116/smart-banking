@@ -7,10 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "14.15"
   }
   public: {
     Tables: {
@@ -19,7 +19,6 @@ export type Database = {
           account_number: string
           account_type: string
           balance: number
-          can_create_account: boolean | null
           created_at: string
           id: string
           updated_at: string
@@ -29,7 +28,6 @@ export type Database = {
           account_number: string
           account_type?: string
           balance?: number
-          can_create_account?: boolean | null
           created_at?: string
           id?: string
           updated_at?: string
@@ -39,7 +37,6 @@ export type Database = {
           account_number?: string
           account_type?: string
           balance?: number
-          can_create_account?: boolean | null
           created_at?: string
           id?: string
           updated_at?: string
@@ -49,30 +46,30 @@ export type Database = {
       }
       mobile_verifications: {
         Row: {
-          created_at: string | null
+          created_at: string
           expires_at: string
           id: string
-          is_verified: boolean | null
+          is_verified: boolean
           mobile_number: string
           otp_code: string
           user_id: string
           verified_at: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           expires_at: string
           id?: string
-          is_verified?: boolean | null
+          is_verified?: boolean
           mobile_number: string
           otp_code: string
           user_id: string
           verified_at?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           expires_at?: string
           id?: string
-          is_verified?: boolean | null
+          is_verified?: boolean
           mobile_number?: string
           otp_code?: string
           user_id?: string
@@ -89,11 +86,10 @@ export type Database = {
           full_name: string | null
           gender: string | null
           id: string
-          is_email_verified: boolean | null
-          is_mobile_verified: boolean | null
-          kyc_status: string | null
+          is_email_verified: boolean
+          is_mobile_verified: boolean
+          kyc_status: string
           kyc_submitted_at: string | null
-          kyc_verified_at: string | null
           mobile_number: string | null
           phone: string | null
           updated_at: string
@@ -106,11 +102,10 @@ export type Database = {
           full_name?: string | null
           gender?: string | null
           id: string
-          is_email_verified?: boolean | null
-          is_mobile_verified?: boolean | null
-          kyc_status?: string | null
+          is_email_verified?: boolean
+          is_mobile_verified?: boolean
+          kyc_status?: string
           kyc_submitted_at?: string | null
-          kyc_verified_at?: string | null
           mobile_number?: string | null
           phone?: string | null
           updated_at?: string
@@ -123,11 +118,10 @@ export type Database = {
           full_name?: string | null
           gender?: string | null
           id?: string
-          is_email_verified?: boolean | null
-          is_mobile_verified?: boolean | null
-          kyc_status?: string | null
+          is_email_verified?: boolean
+          is_mobile_verified?: boolean
+          kyc_status?: string
           kyc_submitted_at?: string | null
-          kyc_verified_at?: string | null
           mobile_number?: string | null
           phone?: string | null
           updated_at?: string
@@ -187,17 +181,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      generate_account_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      generate_account_number: { Args: never; Returns: string }
       process_transaction: {
         Args: {
+          p_amount: number
+          p_description?: string
           p_from_account_id: string
           p_to_account_id: string
-          p_amount: number
           p_transaction_type: string
-          p_description?: string
         }
         Returns: Json
       }
