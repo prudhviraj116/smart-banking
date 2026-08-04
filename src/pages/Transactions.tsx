@@ -152,7 +152,7 @@ const Transactions = () => {
   const selectedAccountData = accounts.find(acc => acc.id === selectedAccount);
 
   return (
-    <div className="min-h-screen bg-secondary/30">
+    <div className="min-h-screen">
       <Navbar />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

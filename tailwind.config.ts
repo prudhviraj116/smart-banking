@@ -26,7 +26,8 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					glow: 'hsl(var(--primary-glow))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -42,7 +43,8 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					foreground: 'hsl(var(--accent-foreground))',
+					glow: 'hsl(var(--accent-glow))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
@@ -66,10 +68,13 @@ export default {
 			backgroundImage: {
 				'banking-gradient': 'var(--banking-gradient)',
 				'success-gradient': 'var(--success-gradient)',
+				'glass-gradient': 'var(--glass-gradient)',
+				'metal-gradient': 'var(--metal-gradient)',
 			},
 			boxShadow: {
 				'card': 'var(--card-shadow)',
 				'glow': 'var(--glow-shadow)',
+				'glow-emerald': 'var(--glow-emerald)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -78,25 +83,32 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
+				},
+				'float-slow': {
+					'0%, 100%': { transform: 'translate3d(0, 0, 0)' },
+					'50%': { transform: 'translate3d(0, -14px, 0)' }
+				},
+				'pulse-glow': {
+					'0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
+					'50%': { opacity: '0.8', transform: 'scale(1.06)' }
+				},
+				'shimmer': {
+					'0%': { transform: 'translateX(-120%)' },
+					'100%': { transform: 'translateX(220%)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float-slow': 'float-slow 7s ease-in-out infinite',
+				'pulse-glow': 'pulse-glow 6s ease-in-out infinite',
+				'shimmer': 'shimmer 2.6s ease-in-out infinite'
 			}
 		}
 	},

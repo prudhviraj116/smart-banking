@@ -37,27 +37,29 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white border-b border-border shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="sticky top-0 z-40 border-b border-white/10 bg-background/60 backdrop-blur-xl">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/dashboard" className="flex items-center space-x-2">
-            <div className="flex items-center justify-center w-8 h-8 bg-banking-gradient rounded-lg">
-              <Shield className="w-5 h-5 text-white" />
+          <Link to="/dashboard" className="group flex items-center space-x-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border-t border-white/30 bg-banking-gradient shadow-lg shadow-primary/25 transition-transform group-hover:-translate-y-0.5">
+              <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-primary">SecureBank</span>
+            <span className="text-lg font-bold tracking-tight text-foreground">
+              Smart<span className="text-gradient-primary">Bank</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden items-center gap-1 rounded-2xl border border-white/10 bg-white/5 p-1 backdrop-blur-md md:flex">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`rounded-xl px-3.5 py-2 text-sm font-medium transition-all ${
                   location.pathname === item.path
-                    ? "text-primary bg-secondary"
-                    : "text-muted-foreground hover:text-primary hover:bg-secondary/50"
+                    ? "bg-primary/15 text-primary-glow shadow-inner"
+                    : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                 }`}
               >
                 {item.label}
@@ -66,14 +68,9 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLogout}
-              className="flex items-center gap-2"
-            >
-              <LogOut className="w-4 h-4" />
+          <div className="hidden items-center gap-4 md:flex">
+            <Button variant="outline" size="sm" onClick={handleLogout} className="gap-2">
+              <LogOut className="h-4 w-4" />
               Logout
             </Button>
           </div>
@@ -82,14 +79,11 @@ const Navbar = () => {
           <div className="md:hidden">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle navigation"
             >
-              {isMobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
@@ -97,28 +91,23 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-border">
+            <div className="space-y-1 border-t border-white/10 px-1 pb-4 pt-2">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                  className={`block rounded-xl px-3 py-2 text-base font-medium transition-colors ${
                     location.pathname === item.path
-                      ? "text-primary bg-secondary"
-                      : "text-muted-foreground hover:text-primary hover:bg-secondary/50"
+                      ? "bg-primary/15 text-primary-glow"
+                      : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.label}
                 </Link>
               ))}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="w-full mt-4 flex items-center justify-center gap-2"
-              >
-                <LogOut className="w-4 h-4" />
+              <Button variant="outline" size="sm" onClick={handleLogout} className="mt-4 w-full gap-2">
+                <LogOut className="h-4 w-4" />
                 Logout
               </Button>
             </div>
