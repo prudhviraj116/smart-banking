@@ -2,100 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* ============================================================
+   Smart Banking — Deep Obsidian luxury design system.
+   All colors MUST be HSL.
+   ============================================================ */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 15% 8%;
+    /* Deep Obsidian base (#090D16) */
+    --background: 220 42% 6%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 15% 8%;
+    /* Glass surfaces */
+    --card: 222 40% 11%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 8%;
+    --popover: 222 44% 9%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 210 100% 15%;
-    --primary-foreground: 0 0% 100%;
+    /* Neon Cyan #06B6D4 */
+    --primary: 189 94% 43%;
+    --primary-foreground: 220 42% 6%;
+    --primary-glow: 187 92% 60%;
 
-    --secondary: 210 10% 96%;
-    --secondary-foreground: 210 100% 15%;
+    --secondary: 220 26% 16%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 10% 96%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 220 26% 14%;
+    /* Light silver #94A3B8 */
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 142 76% 36%;
-    --accent-foreground: 0 0% 100%;
+    /* Neon Emerald #10B981 */
+    --accent: 160 84% 39%;
+    --accent-foreground: 220 42% 6%;
+    --accent-glow: 158 80% 52%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 62%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 210 100% 15%;
+    --border: 220 22% 22%;
+    --input: 220 24% 18%;
+    --ring: 189 94% 43%;
 
-    --banking-gradient: linear-gradient(135deg, hsl(210 100% 15%) 0%, hsl(210 80% 25%) 100%);
-    --success-gradient: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(142 76% 46%) 100%);
-    --card-shadow: 0 4px 20px -2px hsl(210 100% 15% / 0.1);
-    --glow-shadow: 0 0 40px hsl(210 100% 15% / 0.2);
+    --banking-gradient: linear-gradient(135deg, hsl(189 94% 43%) 0%, hsl(160 84% 39%) 100%);
+    --success-gradient: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(158 80% 52%) 100%);
+    --glass-gradient: linear-gradient(
+      145deg,
+      hsl(220 30% 18% / 0.72) 0%,
+      hsl(222 42% 9% / 0.72) 100%
+    );
+    --metal-gradient: linear-gradient(
+      120deg,
+      hsl(45 80% 72%) 0%,
+      hsl(40 40% 92%) 28%,
+      hsl(45 78% 62%) 52%,
+      hsl(38 35% 88%) 78%,
+      hsl(45 70% 68%) 100%
+    );
 
-    --radius: 0.5rem;
+    --card-shadow: 0 24px 60px -24px hsl(220 60% 2% / 0.9), 0 0 0 1px hsl(0 0% 100% / 0.06);
+    --glow-shadow: 0 0 44px hsl(189 94% 43% / 0.28);
+    --glow-emerald: 0 0 44px hsl(160 84% 39% / 0.28);
 
-    --sidebar-background: 0 0% 98%;
+    --radius: 0.9rem;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 222 44% 8%;
+    --sidebar-foreground: 215 20% 78%;
+    --sidebar-primary: 189 94% 43%;
+    --sidebar-primary-foreground: 220 42% 6%;
+    --sidebar-accent: 220 26% 16%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 22% 20%;
+    --sidebar-ring: 189 94% 43%;
   }
 
+  /* The app is dark-mode-first: the dark class mirrors the root palette. */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 220 42% 6%;
+    --foreground: 0 0% 100%;
+    --card: 222 40% 11%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 44% 9%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 189 94% 43%;
+    --primary-foreground: 220 42% 6%;
+    --secondary: 220 26% 16%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 26% 14%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 160 84% 39%;
+    --accent-foreground: 220 42% 6%;
+    --destructive: 0 84% 62%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 22% 22%;
+    --input: 220 24% 18%;
+    --ring: 189 94% 43%;
   }
 }
 
@@ -104,7 +105,107 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    color-scheme: dark;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "ss01";
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.28);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(220 20% 22%);
+    border-radius: 999px;
+    border: 2px solid hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+  }
+}
+
+@layer components {
+  /* Frosted glass surface used across every panel */
+  .glass-panel {
+    @apply relative rounded-2xl border border-white/10 bg-card/60 backdrop-blur-xl;
+    background-image: var(--glass-gradient);
+    box-shadow: var(--card-shadow);
+  }
+
+  .glass-panel-hover {
+    @apply transition-all duration-300;
+  }
+  .glass-panel-hover:hover {
+    border-color: hsl(var(--primary) / 0.35);
+    box-shadow: var(--card-shadow), var(--glow-shadow);
+    transform: translateY(-2px);
+  }
+
+  /* Tactile 3D button surface */
+  .btn-3d {
+    @apply relative overflow-hidden border-t border-white/30 transition-all duration-200;
+    box-shadow:
+      0 10px 24px -8px hsl(var(--primary) / 0.45),
+      inset 0 1px 0 hsl(0 0% 100% / 0.25),
+      inset 0 -2px 6px hsl(220 60% 4% / 0.4);
+  }
+  .btn-3d:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 16px 32px -10px hsl(var(--primary) / 0.55),
+      inset 0 1px 0 hsl(0 0% 100% / 0.3);
+  }
+  .btn-3d:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  .text-gradient-primary {
+    background: var(--banking-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .metal-chip {
+    background-image: var(--metal-gradient);
+    box-shadow:
+      inset 0 1px 1px hsl(0 0% 100% / 0.6),
+      inset 0 -2px 4px hsl(30 40% 20% / 0.5),
+      0 4px 10px hsl(220 60% 2% / 0.6);
+  }
+
+  .embossed-digits {
+    color: hsl(0 0% 100% / 0.95);
+    text-shadow:
+      0 1px 0 hsl(0 0% 100% / 0.45),
+      0 -1px 1px hsl(220 60% 2% / 0.8),
+      0 0 18px hsl(var(--primary) / 0.55);
+  }
+}
+
+@layer utilities {
+  .perspective-1200 {
+    perspective: 1200px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
   }
 }
