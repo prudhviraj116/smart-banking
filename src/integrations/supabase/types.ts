@@ -7,200 +7,20 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "14.15"
   }
   public: {
     Tables: {
-      accounts: {
-        Row: {
-          account_number: string
-          account_type: string
-          balance: number
-          can_create_account: boolean | null
-          created_at: string
-          id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          account_number: string
-          account_type?: string
-          balance?: number
-          can_create_account?: boolean | null
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          account_number?: string
-          account_type?: string
-          balance?: number
-          can_create_account?: boolean | null
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      mobile_verifications: {
-        Row: {
-          created_at: string | null
-          expires_at: string
-          id: string
-          is_verified: boolean | null
-          mobile_number: string
-          otp_code: string
-          user_id: string
-          verified_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          expires_at: string
-          id?: string
-          is_verified?: boolean | null
-          mobile_number: string
-          otp_code: string
-          user_id: string
-          verified_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          expires_at?: string
-          id?: string
-          is_verified?: boolean | null
-          mobile_number?: string
-          otp_code?: string
-          user_id?: string
-          verified_at?: string | null
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          address: string | null
-          created_at: string
-          date_of_birth: string | null
-          email: string | null
-          full_name: string | null
-          gender: string | null
-          id: string
-          is_email_verified: boolean | null
-          is_mobile_verified: boolean | null
-          kyc_status: string | null
-          kyc_submitted_at: string | null
-          kyc_verified_at: string | null
-          mobile_number: string | null
-          phone: string | null
-          updated_at: string
-        }
-        Insert: {
-          address?: string | null
-          created_at?: string
-          date_of_birth?: string | null
-          email?: string | null
-          full_name?: string | null
-          gender?: string | null
-          id: string
-          is_email_verified?: boolean | null
-          is_mobile_verified?: boolean | null
-          kyc_status?: string | null
-          kyc_submitted_at?: string | null
-          kyc_verified_at?: string | null
-          mobile_number?: string | null
-          phone?: string | null
-          updated_at?: string
-        }
-        Update: {
-          address?: string | null
-          created_at?: string
-          date_of_birth?: string | null
-          email?: string | null
-          full_name?: string | null
-          gender?: string | null
-          id?: string
-          is_email_verified?: boolean | null
-          is_mobile_verified?: boolean | null
-          kyc_status?: string | null
-          kyc_submitted_at?: string | null
-          kyc_verified_at?: string | null
-          mobile_number?: string | null
-          phone?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      transactions: {
-        Row: {
-          amount: number
-          created_at: string
-          description: string | null
-          from_account_id: string | null
-          id: string
-          status: string
-          to_account_id: string | null
-          transaction_type: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          description?: string | null
-          from_account_id?: string | null
-          id?: string
-          status?: string
-          to_account_id?: string | null
-          transaction_type: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          description?: string | null
-          from_account_id?: string | null
-          id?: string
-          status?: string
-          to_account_id?: string | null
-          transaction_type?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "transactions_from_account_id_fkey"
-            columns: ["from_account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "transactions_to_account_id_fkey"
-            columns: ["to_account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      generate_account_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      process_transaction: {
-        Args: {
-          p_from_account_id: string
-          p_to_account_id: string
-          p_amount: number
-          p_transaction_type: string
-          p_description?: string
-        }
-        Returns: Json
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
