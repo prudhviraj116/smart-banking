@@ -113,14 +113,14 @@ const Dashboard = () => {
     let totalOut = 0;
     const byType: Record<string, number> = {};
 
-    recentTransactions.forEach((transaction) => {
+    const primaryAccountId = accounts[0]?.id;
+
+    allTransactions.forEach((transaction) => {
       const created = new Date(transaction.created_at);
       const key = `${created.getFullYear()}-${created.getMonth()}`;
       const bucket = months.find((month) => month.key === key);
       const amount = Number(transaction.amount ?? 0);
-      const isCredit =
-        transaction.transaction_type === "deposit" ||
-        (transaction.transaction_type === "transfer" && transaction.to_account_id);
+      const isCredit = transaction.to_account_id === primaryAccountId;
 
       if (isCredit) {
         totalIn += amount;
@@ -128,15 +128,21 @@ const Dashboard = () => {
       } else {
         totalOut += amount;
         if (bucket) bucket.outflow += amount;
-        const label = String(transaction.transaction_type ?? "other");
+        const description = String(transaction.description ?? "");
+        const label = description.includes(" - ")
+          ? description.split(" - ")[0].trim()
+          : description.trim() || String(transaction.transaction_type ?? "Other");
         byType[label] = (byType[label] ?? 0) + amount;
       }
     });
 
-    const categories = Object.entries(byType).map(([label, value]) => ({
-      label: label.charAt(0).toUpperCase() + label.slice(1),
-      value,
-    }));
+    const categories = Object.entries(byType)
+      .map(([label, value]) => ({
+        label: label.charAt(0).toUpperCase() + label.slice(1),
+        value,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6);
 
     return {
       trendData: months.map(({ label, inflow: i, outflow: o }) => ({
