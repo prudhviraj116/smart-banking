@@ -120,17 +120,12 @@ class ApiClient {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('User not authenticated');
 
-    // Generate account number
-    const { data: accountNumber, error: rpcError } = await supabase
-      .rpc('generate_account_number');
-
-    if (rpcError) throw rpcError;
-
+    // account_number and the starting balance are assigned server-side by the database.
     const { data, error } = await supabase
       .from('accounts')
       .insert({
         user_id: user.id,
-        account_number: accountNumber,
+        account_number: '',
         account_type: accountType,
       })
       .select()
