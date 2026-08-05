@@ -160,7 +160,7 @@ const Dashboard = () => {
       inflow: totalIn,
       outflow: totalOut,
     };
-  }, [recentTransactions]);
+  }, [allTransactions, accounts]);
 
   const quickActions = [
     { label: "Transfer", icon: Send, to: "/transfer" },
