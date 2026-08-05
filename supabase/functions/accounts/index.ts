@@ -60,27 +60,23 @@ serve(async (req) => {
     }
 
     if (req.method === 'POST') {
-      const { account_type = 'checking' } = await req.json()
-      
-      // Generate account number using the database function
-      const { data: accountNumberResult, error: numberError } = await supabase
-        .rpc('generate_account_number')
-      
-      if (numberError) {
+      const body = await req.json().catch(() => ({}))
+      const requestedType = typeof body?.account_type === 'string' ? body.account_type : 'checking'
+
+      if (!['checking', 'savings'].includes(requestedType)) {
         return new Response(
-          JSON.stringify({ error: 'Failed to generate account number' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: 'Invalid account type' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
 
-      // Create new account
+      // account_number and the starting balance are assigned server-side by the database.
       const { data: account, error } = await supabase
         .from('accounts')
         .insert({
           user_id: user.id,
-          account_number: accountNumberResult,
-          account_type,
-          balance: 0
+          account_number: '',
+          account_type: requestedType,
         })
         .select()
         .single()
