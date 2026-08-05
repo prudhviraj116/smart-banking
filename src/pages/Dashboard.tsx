@@ -31,6 +31,7 @@ const Dashboard = () => {
   const [showBalances, setShowBalances] = useState(true);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [allTransactions, setAllTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCard, setActiveCard] = useState(0);
   const { toast } = useToast();
