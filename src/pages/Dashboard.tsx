@@ -469,9 +469,7 @@ const Dashboard = () => {
                   </p>
                 ) : (
                   recentTransactions.map((transaction, index) => {
-                    const isCredit =
-                      transaction.transaction_type === "deposit" ||
-                      (transaction.transaction_type === "transfer" && transaction.to_account_id);
+                    const isCredit = transaction.to_account_id === accounts[0]?.id;
 
                     return (
                       <motion.div
