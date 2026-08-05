@@ -180,7 +180,7 @@ const Dashboard = () => {
     {
       title: "Money In",
       value: formatCurrency(inflow),
-      hint: "Recent inflow",
+      hint: "Inflow, last 6 months",
       icon: TrendingUp,
       tone: "accent" as const,
     },
