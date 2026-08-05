@@ -187,7 +187,7 @@ const Dashboard = () => {
     {
       title: "Money Out",
       value: formatCurrency(outflow),
-      hint: "Recent outflow",
+      hint: "Outflow, last 6 months",
       icon: Activity,
       tone: "primary" as const,
     },
