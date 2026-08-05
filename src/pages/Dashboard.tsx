@@ -31,6 +31,7 @@ const Dashboard = () => {
   const [showBalances, setShowBalances] = useState(true);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [allTransactions, setAllTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCard, setActiveCard] = useState(0);
   const { toast } = useToast();
@@ -49,8 +50,10 @@ const Dashboard = () => {
       if (accountsData.length > 0) {
         try {
           const transactions = await apiClient.getTransactions(accountsData[0].id);
+          setAllTransactions(transactions);
           setRecentTransactions(transactions.slice(0, 6));
         } catch (error) {
+          setAllTransactions([]);
           setRecentTransactions([]);
         }
       }
@@ -110,14 +113,14 @@ const Dashboard = () => {
     let totalOut = 0;
     const byType: Record<string, number> = {};
 
-    recentTransactions.forEach((transaction) => {
+    const primaryAccountId = accounts[0]?.id;
+
+    allTransactions.forEach((transaction) => {
       const created = new Date(transaction.created_at);
       const key = `${created.getFullYear()}-${created.getMonth()}`;
       const bucket = months.find((month) => month.key === key);
       const amount = Number(transaction.amount ?? 0);
-      const isCredit =
-        transaction.transaction_type === "deposit" ||
-        (transaction.transaction_type === "transfer" && transaction.to_account_id);
+      const isCredit = transaction.to_account_id === primaryAccountId;
 
       if (isCredit) {
         totalIn += amount;
@@ -125,15 +128,21 @@ const Dashboard = () => {
       } else {
         totalOut += amount;
         if (bucket) bucket.outflow += amount;
-        const label = String(transaction.transaction_type ?? "other");
+        const description = String(transaction.description ?? "");
+        const label = description.includes(" - ")
+          ? description.split(" - ")[0].trim()
+          : description.trim() || String(transaction.transaction_type ?? "Other");
         byType[label] = (byType[label] ?? 0) + amount;
       }
     });
 
-    const categories = Object.entries(byType).map(([label, value]) => ({
-      label: label.charAt(0).toUpperCase() + label.slice(1),
-      value,
-    }));
+    const categories = Object.entries(byType)
+      .map(([label, value]) => ({
+        label: label.charAt(0).toUpperCase() + label.slice(1),
+        value,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6);
 
     return {
       trendData: months.map(({ label, inflow: i, outflow: o }) => ({
@@ -151,7 +160,7 @@ const Dashboard = () => {
       inflow: totalIn,
       outflow: totalOut,
     };
-  }, [recentTransactions]);
+  }, [allTransactions, accounts]);
 
   const quickActions = [
     { label: "Transfer", icon: Send, to: "/transfer" },
@@ -171,14 +180,14 @@ const Dashboard = () => {
     {
       title: "Money In",
       value: formatCurrency(inflow),
-      hint: "Recent inflow",
+      hint: "Inflow, last 6 months",
       icon: TrendingUp,
       tone: "accent" as const,
     },
     {
       title: "Money Out",
       value: formatCurrency(outflow),
-      hint: "Recent outflow",
+      hint: "Outflow, last 6 months",
       icon: Activity,
       tone: "primary" as const,
     },
@@ -460,9 +469,7 @@ const Dashboard = () => {
                   </p>
                 ) : (
                   recentTransactions.map((transaction, index) => {
-                    const isCredit =
-                      transaction.transaction_type === "deposit" ||
-                      (transaction.transaction_type === "transfer" && transaction.to_account_id);
+                    const isCredit = transaction.to_account_id === accounts[0]?.id;
 
                     return (
                       <motion.div
