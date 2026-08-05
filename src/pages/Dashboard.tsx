@@ -50,8 +50,10 @@ const Dashboard = () => {
       if (accountsData.length > 0) {
         try {
           const transactions = await apiClient.getTransactions(accountsData[0].id);
+          setAllTransactions(transactions);
           setRecentTransactions(transactions.slice(0, 6));
         } catch (error) {
+          setAllTransactions([]);
           setRecentTransactions([]);
         }
       }
