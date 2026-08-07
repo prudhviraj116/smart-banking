@@ -100,24 +100,25 @@ export default {
 				},
 				'float-slow': {
 					'0%, 100%': { transform: 'translate3d(0, 0, 0)' },
-					'50%': { transform: 'translate3d(0, -14px, 0)' }
+					'50%': { transform: 'translate3d(0, -6px, 0)' }
 				},
 				'pulse-glow': {
-					'0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
-					'50%': { opacity: '0.8', transform: 'scale(1.06)' }
+					'0%, 100%': { opacity: '0.5' },
+					'50%': { opacity: '0.75' }
 				},
 				'shimmer': {
-					'0%': { transform: 'translateX(-120%)' },
-					'100%': { transform: 'translateX(220%)' }
+					'0%': { opacity: '0.4' },
+					'100%': { opacity: '0.4' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'float-slow': 'float-slow 7s ease-in-out infinite',
-				'pulse-glow': 'pulse-glow 6s ease-in-out infinite',
-				'shimmer': 'shimmer 2.6s ease-in-out infinite'
+				'float-slow': 'float-slow 8s ease-in-out infinite',
+				'pulse-glow': 'pulse-glow 8s ease-in-out infinite',
+				'shimmer': 'none'
 			}
+
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
