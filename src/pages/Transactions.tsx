@@ -168,7 +168,7 @@ const Transactions = () => {
               <Download className="w-4 h-4" />
               Export
             </Button>
-            <Button asChild className="bg-banking-gradient hover:shadow-glow">
+            <Button asChild className="bg-banking-gradient">
               <Link to="/transfer" className="flex items-center gap-2">
                 Transfer Funds
               </Link>

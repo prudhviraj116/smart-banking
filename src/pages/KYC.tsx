@@ -301,7 +301,7 @@ const KYC = () => {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-banking-gradient hover:shadow-glow"
+            className="w-full bg-banking-gradient"
           >
             {isLoading ? "Saving..." : "Save KYC Information"}
           </Button>
@@ -326,7 +326,7 @@ const KYC = () => {
           <Button
             onClick={sendOTP}
             disabled={isLoading}
-            className="w-full bg-banking-gradient hover:shadow-glow"
+            className="w-full bg-banking-gradient"
           >
             {isLoading ? "Sending..." : "Send Verification Code"}
           </Button>
@@ -354,7 +354,7 @@ const KYC = () => {
             <Button
               onClick={verifyOTP}
               disabled={isLoading || otpCode.length !== 6}
-              className="w-full bg-banking-gradient hover:shadow-glow"
+              className="w-full bg-banking-gradient"
             >
               {isLoading ? "Verifying..." : "Verify Code"}
             </Button>
@@ -393,7 +393,7 @@ const KYC = () => {
         
         <Button
           onClick={() => window.location.reload()}
-          className="w-full bg-banking-gradient hover:shadow-glow"
+          className="w-full bg-banking-gradient"
         >
           I've Verified My Email
         </Button>

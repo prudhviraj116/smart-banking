@@ -279,7 +279,7 @@ const Dashboard = () => {
                     {item.title}
                   </CardTitle>
                   <span
-                    className={`flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 ${
+                    className={`flex h-9 w-9 items-center justify-center rounded-xl border border-border ${
                       item.tone === "accent" ? "bg-accent/15 text-accent" : "bg-primary/15 text-primary"
                     }`}
                   >
@@ -311,9 +311,9 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="space-y-5">
                 {loading ? (
-                  <div className="h-56 animate-pulse rounded-3xl border border-white/10 bg-white/5" />
+                  <div className="h-56 animate-pulse rounded-3xl border border-border bg-secondary/50" />
                 ) : !selectedAccount ? (
-                  <div className="rounded-2xl border border-dashed border-white/15 p-10 text-center text-sm text-muted-foreground">
+                  <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
                     No accounts yet. Create your first account to generate a card.
                   </div>
                 ) : (
@@ -342,7 +342,7 @@ const Dashboard = () => {
                             className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all ${
                               index === activeCard
                                 ? "border-primary/50 bg-primary/15 text-primary-glow"
-                                : "border-white/10 bg-white/5 text-muted-foreground hover:text-foreground"
+                                : "border-border bg-secondary/50 text-muted-foreground hover:text-foreground"
                             }`}
                           >
                             •••• {String(account.account_number).slice(-4)}
@@ -374,7 +374,7 @@ const Dashboard = () => {
                   ))}
                 </div>
 
-                <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="space-y-3 rounded-2xl border border-border bg-secondary/50 p-4">
                   <p className="text-[0.65rem] uppercase tracking-[0.28em] text-muted-foreground">
                     Accounts
                   </p>
@@ -420,10 +420,10 @@ const Dashboard = () => {
                   </div>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-accent shadow-glow-emerald" /> Inflow
+                      <span className="h-2 w-2 rounded-full bg-accent " /> Inflow
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-primary shadow-glow" /> Outflow
+                      <span className="h-2 w-2 rounded-full bg-primary" /> Outflow
                     </span>
                   </div>
                 </div>
@@ -459,7 +459,7 @@ const Dashboard = () => {
                     {[0, 1, 2].map((index) => (
                       <div
                         key={index}
-                        className="h-16 animate-pulse rounded-2xl border border-white/10 bg-white/5"
+                        className="h-16 animate-pulse rounded-2xl border border-border bg-secondary/50"
                       />
                     ))}
                   </div>
@@ -477,11 +477,11 @@ const Dashboard = () => {
                         initial={{ opacity: 0, y: 25 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.05 * index, duration: 0.4 }}
-                        className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-3.5 transition-colors hover:border-primary/30 hover:bg-primary/5"
+                        className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-secondary/50 p-3.5 transition-colors hover:border-primary/30 hover:bg-primary/5"
                       >
                         <div className="flex min-w-0 items-center gap-3">
                           <span
-                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 ${
+                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border ${
                               isCredit ? "bg-accent/15 text-accent" : "bg-destructive/15 text-destructive"
                             }`}
                           >

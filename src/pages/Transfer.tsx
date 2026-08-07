@@ -236,7 +236,7 @@ const Transfer = () => {
                   {/* Submit Button */}
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-banking-gradient hover:shadow-glow transition-all duration-300"
+                    className="w-full h-12 bg-banking-gradient transition-all duration-300"
                     disabled={isLoading}
                   >
                     {isLoading ? "Processing Transfer..." : "Transfer Funds"}

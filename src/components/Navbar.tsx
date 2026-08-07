@@ -37,12 +37,12 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="sticky top-0 z-40 border-b border-white/10 bg-background/60 backdrop-blur-xl">
+    <nav className="sticky top-0 z-40 border-b border-border bg-background/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/dashboard" className="group flex items-center space-x-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border-t border-white/30 bg-banking-gradient shadow-lg shadow-primary/25 transition-transform group-hover:-translate-y-0.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-banking-gradient shadow-card transition-transform group-hover:-translate-y-0.5">
               <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="text-lg font-bold tracking-tight text-foreground">
@@ -51,7 +51,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center gap-1 rounded-2xl border border-white/10 bg-white/5 p-1 backdrop-blur-md md:flex">
+          <div className="hidden items-center gap-1 rounded-2xl border border-border bg-secondary/50 p-1 md:flex">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -59,7 +59,7 @@ const Navbar = () => {
                 className={`rounded-xl px-3.5 py-2 text-sm font-medium transition-all ${
                   location.pathname === item.path
                     ? "bg-primary/15 text-primary-glow shadow-inner"
-                    : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                    : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
                 }`}
               >
                 {item.label}
@@ -91,7 +91,7 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
-            <div className="space-y-1 border-t border-white/10 px-1 pb-4 pt-2">
+            <div className="space-y-1 border-t border-border px-1 pb-4 pt-2">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
@@ -99,7 +99,7 @@ const Navbar = () => {
                   className={`block rounded-xl px-3 py-2 text-base font-medium transition-colors ${
                     location.pathname === item.path
                       ? "bg-primary/15 text-primary-glow"
-                      : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                      : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
