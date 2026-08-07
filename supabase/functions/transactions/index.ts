@@ -105,11 +105,11 @@ serve(async (req) => {
 
       // If transfer by account number, look up the account ID
       if (transaction_type === 'transfer' && to_account_number && !to_account_id) {
-        const { data: targetAccount, error: lookupError } = await supabase
+        const { data: targetAccount, error: lookupError } = await adminClient
           .from('accounts')
           .select('id')
           .eq('account_number', to_account_number)
-          .single()
+          .maybeSingle()
 
         if (lookupError || !targetAccount) {
           return new Response(
@@ -123,13 +123,13 @@ serve(async (req) => {
 
       // Validate account ownership for from_account
       if (from_account_id) {
-        const { data: fromAccount, error: fromError } = await supabase
+        const { data: fromAccount, error: fromError } = await adminClient
           .from('accounts')
           .select('user_id')
           .eq('id', from_account_id)
-          .single()
+          .maybeSingle()
 
-        if (fromError || fromAccount.user_id !== user.id) {
+        if (fromError || !fromAccount || fromAccount.user_id !== user.id) {
           return new Response(
             JSON.stringify({ error: 'Invalid source account' }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -137,15 +137,18 @@ serve(async (req) => {
         }
       }
 
-      // Process the transaction using the database function
-      const { data: result, error: processError } = await supabase
+      // Process the transaction using the trusted database routine.
+      // The acting user is taken from the verified JWT, never from the request body.
+      const { data: result, error: processError } = await adminClient
         .rpc('process_transaction', {
-          p_from_account_id: from_account_id,
-          p_to_account_id: finalToAccountId,
+          p_from_account_id: from_account_id ?? null,
+          p_to_account_id: finalToAccountId ?? null,
           p_amount: amount,
           p_transaction_type: transaction_type,
-          p_description: description
+          p_description: description ?? null,
+          p_user_id: user.id
         })
+
 
       if (processError) {
         return new Response(
