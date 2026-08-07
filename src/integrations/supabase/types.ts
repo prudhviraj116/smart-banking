@@ -189,6 +189,7 @@ export type Database = {
           p_from_account_id: string
           p_to_account_id: string
           p_transaction_type: string
+          p_user_id?: string
         }
         Returns: Json
       }

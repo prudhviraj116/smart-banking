@@ -162,40 +162,29 @@ class ApiClient {
     type: string;
     description?: string;
   }): Promise<Transaction> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error('User not authenticated');
 
-    let toAccountId = null;
-
-    // If transferring to another account, find the target account by number
-    if (transaction.toAccountNumber && transaction.type === 'transfer') {
-      const { data: targetAccount, error: accountError } = await supabase
-        .from('accounts')
-        .select('id')
-        .eq('account_number', transaction.toAccountNumber)
-        .single();
-
-      if (accountError || !targetAccount) {
-        throw new Error('Target account not found');
-      }
-      toAccountId = targetAccount.id;
-    }
-
-    // Use the process_transaction function for proper balance updates
-    const { data, error } = await supabase.rpc('process_transaction', {
-      p_from_account_id: transaction.fromAccountId || null,
-      p_to_account_id: toAccountId,
-      p_amount: transaction.amount,
-      p_transaction_type: transaction.type,
-      p_description: transaction.description || null,
+    // All money movement is processed server-side: the edge function verifies the
+    // signed-in owner and calls the trusted transaction routine.
+    const { data, error } = await supabase.functions.invoke('transactions', {
+      body: {
+        from_account_id: transaction.fromAccountId || null,
+        to_account_number: transaction.toAccountNumber || null,
+        amount: transaction.amount,
+        transaction_type: transaction.type,
+        description: transaction.description || null,
+      },
     });
 
-    if (error) throw error;
+    if (error) {
+      throw new Error('Transaction failed. Please check the details and try again.');
+    }
 
-    const result = data as { success: boolean; error?: string; transaction_id?: string };
+    const result = data as { success?: boolean; error?: string; transaction_id?: string };
 
-    if (!result.success) {
-      throw new Error(result.error || 'Transaction failed');
+    if (!result?.success || !result.transaction_id) {
+      throw new Error(result?.error || 'Transaction failed');
     }
 
     // Fetch the created transaction
@@ -208,6 +197,7 @@ class ApiClient {
     if (fetchError) throw fetchError;
     return transactionData;
   }
+
 
   async isAuthenticated(): Promise<boolean> {
     const { data: { session } } = await supabase.auth.getSession();
