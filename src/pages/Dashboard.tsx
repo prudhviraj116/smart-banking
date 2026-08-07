@@ -314,14 +314,14 @@ const Dashboard = () => {
           ))}
         </MotionGrid>
 
-        {/* ---------- 2. 3D card display + quick transfer ---------- */}
-        <MotionGrid className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-5">
+        {/* ---------- 2. Card display + quick transfer ---------- */}
+        <MotionGrid className="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-5">
           <MotionWidget className="lg:col-span-3">
             <Card className="h-full">
               <CardHeader className="flex flex-row items-start justify-between space-y-0">
                 <div>
                   <CardTitle className="text-lg">Your Cards</CardTitle>
-                  <CardDescription>Click the card to reveal CVV and quick actions</CardDescription>
+                  <CardDescription>Manage the card linked to each account</CardDescription>
                 </div>
                 <Button variant="outline" size="sm" onClick={createAccount}>
                   <Plus className="h-4 w-4" />
@@ -330,14 +330,15 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="space-y-5">
                 {loading ? (
-                  <div className="h-56 animate-pulse rounded-3xl border border-border bg-secondary/50" />
+                  <div className="h-56 animate-pulse rounded-2xl border border-border bg-secondary/50" />
                 ) : !selectedAccount ? (
                   <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
                     No accounts yet. Create your first account to generate a card.
                   </div>
                 ) : (
                   <>
-                    <Credit3DCard
+                    <AccountCard
+
                       holder={selectedAccount.account_type?.toUpperCase() ?? "SMARTBANK"}
                       accountNumber={selectedAccount.account_number}
                       accountType={selectedAccount.account_type}
