@@ -207,67 +207,86 @@ const Dashboard = () => {
       <Navbar />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* ---------- 1. Header + 3D balance overview ---------- */}
-        <MotionGrid className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* ---------- 1. Header + balance overview ---------- */}
+        <MotionGrid className="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
           <MotionWidget className="lg:col-span-2">
-            <Card className="glass-panel-hover h-full overflow-hidden">
-              <CardContent className="relative p-7">
-                <div className="absolute -right-16 -top-20 h-52 w-52 rounded-full bg-primary/15 blur-3xl" />
-                <div className="relative">
-                  <Badge variant="emerald" className="mb-4 gap-1.5">
-                    <Sparkles className="h-3 w-3" />
-                    Smart Banking Suite
-                  </Badge>
-                  <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                    Welcome back to your{" "}
-                    <span className="text-gradient-primary">command center</span>
-                  </h1>
-                  <p className="mt-2 max-w-lg text-sm text-muted-foreground">
-                    Real-time balances, expense intelligence and instant transfers — all in one
-                    obsidian-glass workspace.
-                  </p>
+            <Card className="glass-panel-hover h-full">
+              <CardContent className="p-7">
+                <Badge variant="emerald" className="mb-4 gap-1.5">
+                  <Sparkles className="h-3 w-3" />
+                  Smart Banking Suite
+                </Badge>
+                <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                  Welcome back to your{" "}
+                  <span className="text-gradient-primary">command center</span>
+                </h1>
+                <p className="mt-2 max-w-lg text-sm text-muted-foreground">
+                  Real-time balances, expense intelligence and instant transfers — all in one calm
+                  workspace.
+                </p>
 
-                  <div className="mt-7 flex flex-wrap items-end gap-8">
-                    <div>
-                      <p className="text-[0.65rem] uppercase tracking-[0.3em] text-muted-foreground">
-                        Total Balance
-                      </p>
-                      <motion.p
-                        key={`${totalBalance}-${showBalances}`}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-1 text-4xl font-bold text-accent drop-shadow-[0_0_22px_hsl(var(--accent)/0.45)]"
-                      >
-                        {formatCurrency(totalBalance)}
-                      </motion.p>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      <Button size="sm" variant="outline" onClick={() => setShowBalances((v) => !v)}>
-                        {showBalances ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        {showBalances ? "Hide" : "Show"} Balances
-                      </Button>
-                      <Button size="sm" asChild>
-                        <Link to="/transfer">
-                          <Plus className="h-4 w-4" />
-                          Transfer Funds
-                        </Link>
-                      </Button>
-                    </div>
+                <div className="mt-7 flex flex-wrap items-end gap-8">
+                  <div>
+                    <p className="stat-label">Total Balance</p>
+                    <motion.p
+                      key={`${totalBalance}-${showBalances}`}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-1 font-display text-4xl font-semibold text-primary-glow"
+                    >
+                      {formatCurrency(totalBalance)}
+                    </motion.p>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Button size="sm" variant="outline" onClick={() => setShowBalances((v) => !v)}>
+                      {showBalances ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showBalances ? "Hide" : "Show"} Balances
+                    </Button>
+                    <Button size="sm" asChild>
+                      <Link to="/transfer">
+                        <Plus className="h-4 w-4" />
+                        Transfer Funds
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </MotionWidget>
 
-          {/* Interactive floating 3D vault */}
           <MotionWidget>
-            <Card className="glass-panel-hover h-full overflow-hidden">
-              <CardContent className="p-0">
-                <VaultSphere className="h-[268px] w-full animate-float-slow" />
+            <Card className="glass-panel-hover h-full">
+              <CardContent className="flex h-full flex-col justify-between gap-5 p-7">
+                <div>
+                  <p className="stat-label">Net flow</p>
+                  <p className="mt-1 font-display text-3xl font-semibold text-foreground">
+                    {formatCurrency(inflow - outflow)}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">Last 6 months</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between rounded-xl border border-border bg-secondary/50 px-3 py-2">
+                    <span className="flex items-center gap-2 text-xs font-medium text-secondary-foreground">
+                      <ArrowDownLeft className="h-3.5 w-3.5 text-primary" /> Money in
+                    </span>
+                    <span className="text-xs font-semibold text-foreground">
+                      {formatCurrency(inflow)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl border border-border bg-secondary/50 px-3 py-2">
+                    <span className="flex items-center gap-2 text-xs font-medium text-secondary-foreground">
+                      <ArrowUpRight className="h-3.5 w-3.5 text-destructive" /> Money out
+                    </span>
+                    <span className="text-xs font-semibold text-foreground">
+                      {formatCurrency(outflow)}
+                    </span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </MotionWidget>
         </MotionGrid>
+
 
         {/* ---------- Summary metrics ---------- */}
         <MotionGrid className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
