@@ -23,14 +23,14 @@ export interface CategoryPoint {
 }
 
 const tooltipStyle = {
-  background: "hsl(var(--popover) / 0.92)",
+  background: "hsl(var(--card))",
   border: "1px solid hsl(var(--border))",
   borderRadius: "0.75rem",
-  backdropFilter: "blur(12px)",
   color: "hsl(var(--foreground))",
   fontSize: "0.75rem",
-  boxShadow: "0 18px 40px -20px hsl(220 60% 2% / 0.9)",
+  boxShadow: "0 12px 28px -18px hsl(110 14% 20% / 0.35)",
 } as const;
+
 
 /** Glowing gradient trend area chart. */
 export const BalanceTrendChart = ({ data }: { data: TrendPoint[] }) => (

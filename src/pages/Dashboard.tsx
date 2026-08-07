@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import VaultSphere from "@/components/VaultSphere";
-import Credit3DCard from "@/components/Credit3DCard";
+import AccountCard from "@/components/AccountCard";
+
 import { MotionGrid, MotionWidget } from "@/components/MotionWidget";
 import { BalanceTrendChart, ExpenseBreakdownChart } from "@/components/FinanceCharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
