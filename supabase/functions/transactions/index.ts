@@ -46,6 +46,15 @@ serve(async (req) => {
       )
     }
 
+    // Caller-scoped client: reads run under the caller's own RLS policies.
+    const userClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        auth: { autoRefreshToken: false, persistSession: false },
+        global: { headers: { Authorization: `Bearer ${token}` } },
+      }
+    )
 
     const url = new URL(req.url)
     const pathParts = url.pathname.split('/')
@@ -53,7 +62,8 @@ serve(async (req) => {
 
     if (req.method === 'GET' && accountId && accountId !== 'transactions') {
       // Get transactions for a specific account
-      const { data: transactions, error } = await supabase
+      const { data: transactions, error } = await userClient
+
         .from('transactions')
         .select(`
           *,
