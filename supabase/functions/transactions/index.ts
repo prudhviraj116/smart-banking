@@ -24,19 +24,28 @@ serve(async (req) => {
       }
     )
 
+    // Trusted server client: only used for the privileged transaction routine,
+    // never for reading data on behalf of the caller.
+    const adminClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    )
+
     // Get the authorization header
-    const authHeader = req.headers.get('Authorization')!
+    const authHeader = req.headers.get('Authorization') ?? ''
     const token = authHeader.replace('Bearer ', '')
-    
+
     // Get user from token
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-    
+
     if (authError || !user) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
 
     const url = new URL(req.url)
     const pathParts = url.pathname.split('/')
