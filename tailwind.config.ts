@@ -73,14 +73,17 @@ export default {
 			backgroundImage: {
 				'banking-gradient': 'var(--banking-gradient)',
 				'success-gradient': 'var(--success-gradient)',
-				'glass-gradient': 'var(--glass-gradient)',
-				'metal-gradient': 'var(--metal-gradient)',
+				'glass-gradient': 'var(--surface-gradient)',
+				'surface-gradient': 'var(--surface-gradient)',
+				'chip-gradient': 'var(--chip-gradient)',
 			},
 			boxShadow: {
 				'card': 'var(--card-shadow)',
-				'glow': 'var(--glow-shadow)',
-				'glow-emerald': 'var(--glow-emerald)',
+				'card-hover': 'var(--card-shadow-hover)',
+				'glow': 'var(--card-shadow-hover)',
+				'glow-emerald': 'var(--card-shadow-hover)',
 			},
+
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
