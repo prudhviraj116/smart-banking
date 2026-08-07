@@ -140,7 +140,7 @@ const Transactions = () => {
   const getTransactionColor = (transaction: any) => {
     const isCredit = transaction.transaction_type === "deposit" || 
       (transaction.transaction_type === "transfer" && selectedAccount === transaction.to_account_id);
-    return isCredit ? "text-accent" : "text-destructive";
+    return isCredit ? "text-primary-glow" : "text-destructive";
   };
 
   const getTransactionBg = (transaction: any) => {
@@ -168,7 +168,7 @@ const Transactions = () => {
               <Download className="w-4 h-4" />
               Export
             </Button>
-            <Button asChild className="bg-banking-gradient hover:shadow-glow">
+            <Button asChild className="bg-banking-gradient">
               <Link to="/transfer" className="flex items-center gap-2">
                 Transfer Funds
               </Link>

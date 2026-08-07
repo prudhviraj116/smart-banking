@@ -70,14 +70,14 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-banking-gradient flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-banking-gradient rounded-full shadow-glow border-t border-white/30 mb-4">
-            <Shield className="w-8 h-8 text-primary" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-banking-gradient rounded-full shadow-card mb-4">
+            <Shield className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">SecureBank</h1>
-          <p className="text-blue-100">Join thousands of satisfied customers</p>
+          <p className="text-muted-foreground">Join thousands of satisfied customers</p>
         </div>
 
         <Card className="shadow-card">
@@ -168,7 +168,7 @@ const Register = () => {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-banking-gradient hover:shadow-glow transition-all duration-300"
+                className="w-full h-12 bg-banking-gradient transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? "Creating Account..." : "Create Account"}
@@ -186,7 +186,7 @@ const Register = () => {
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-blue-100 mt-6">
+        <p className="text-center text-xs text-muted-foreground mt-6">
           By creating an account, you agree to our Terms of Service and Privacy Policy.
         </p>
       </div>

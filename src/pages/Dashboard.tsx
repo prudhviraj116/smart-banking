@@ -2,8 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import VaultSphere from "@/components/VaultSphere";
-import Credit3DCard from "@/components/Credit3DCard";
+import AccountCard from "@/components/AccountCard";
+
 import { MotionGrid, MotionWidget } from "@/components/MotionWidget";
 import { BalanceTrendChart, ExpenseBreakdownChart } from "@/components/FinanceCharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -207,67 +207,86 @@ const Dashboard = () => {
       <Navbar />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* ---------- 1. Header + 3D balance overview ---------- */}
-        <MotionGrid className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* ---------- 1. Header + balance overview ---------- */}
+        <MotionGrid className="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-3">
           <MotionWidget className="lg:col-span-2">
-            <Card className="glass-panel-hover h-full overflow-hidden">
-              <CardContent className="relative p-7">
-                <div className="absolute -right-16 -top-20 h-52 w-52 rounded-full bg-primary/15 blur-3xl" />
-                <div className="relative">
-                  <Badge variant="emerald" className="mb-4 gap-1.5">
-                    <Sparkles className="h-3 w-3" />
-                    Smart Banking Suite
-                  </Badge>
-                  <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                    Welcome back to your{" "}
-                    <span className="text-gradient-primary">command center</span>
-                  </h1>
-                  <p className="mt-2 max-w-lg text-sm text-muted-foreground">
-                    Real-time balances, expense intelligence and instant transfers — all in one
-                    obsidian-glass workspace.
-                  </p>
+            <Card className="glass-panel-hover h-full">
+              <CardContent className="p-7">
+                <Badge variant="emerald" className="mb-4 gap-1.5">
+                  <Sparkles className="h-3 w-3" />
+                  Smart Banking Suite
+                </Badge>
+                <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                  Welcome back to your{" "}
+                  <span className="text-gradient-primary">command center</span>
+                </h1>
+                <p className="mt-2 max-w-lg text-sm text-muted-foreground">
+                  Real-time balances, expense intelligence and instant transfers — all in one calm
+                  workspace.
+                </p>
 
-                  <div className="mt-7 flex flex-wrap items-end gap-8">
-                    <div>
-                      <p className="text-[0.65rem] uppercase tracking-[0.3em] text-muted-foreground">
-                        Total Balance
-                      </p>
-                      <motion.p
-                        key={`${totalBalance}-${showBalances}`}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-1 text-4xl font-bold text-accent drop-shadow-[0_0_22px_hsl(var(--accent)/0.45)]"
-                      >
-                        {formatCurrency(totalBalance)}
-                      </motion.p>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      <Button size="sm" variant="outline" onClick={() => setShowBalances((v) => !v)}>
-                        {showBalances ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        {showBalances ? "Hide" : "Show"} Balances
-                      </Button>
-                      <Button size="sm" asChild>
-                        <Link to="/transfer">
-                          <Plus className="h-4 w-4" />
-                          Transfer Funds
-                        </Link>
-                      </Button>
-                    </div>
+                <div className="mt-7 flex flex-wrap items-end gap-8">
+                  <div>
+                    <p className="stat-label">Total Balance</p>
+                    <motion.p
+                      key={`${totalBalance}-${showBalances}`}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-1 font-display text-4xl font-semibold text-primary-glow"
+                    >
+                      {formatCurrency(totalBalance)}
+                    </motion.p>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Button size="sm" variant="outline" onClick={() => setShowBalances((v) => !v)}>
+                      {showBalances ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showBalances ? "Hide" : "Show"} Balances
+                    </Button>
+                    <Button size="sm" asChild>
+                      <Link to="/transfer">
+                        <Plus className="h-4 w-4" />
+                        Transfer Funds
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </MotionWidget>
 
-          {/* Interactive floating 3D vault */}
           <MotionWidget>
-            <Card className="glass-panel-hover h-full overflow-hidden">
-              <CardContent className="p-0">
-                <VaultSphere className="h-[268px] w-full animate-float-slow" />
+            <Card className="glass-panel-hover h-full">
+              <CardContent className="flex h-full flex-col justify-between gap-5 p-7">
+                <div>
+                  <p className="stat-label">Net flow</p>
+                  <p className="mt-1 font-display text-3xl font-semibold text-foreground">
+                    {formatCurrency(inflow - outflow)}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">Last 6 months</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between rounded-xl border border-border bg-secondary/50 px-3 py-2">
+                    <span className="flex items-center gap-2 text-xs font-medium text-secondary-foreground">
+                      <ArrowDownLeft className="h-3.5 w-3.5 text-primary" /> Money in
+                    </span>
+                    <span className="text-xs font-semibold text-foreground">
+                      {formatCurrency(inflow)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-xl border border-border bg-secondary/50 px-3 py-2">
+                    <span className="flex items-center gap-2 text-xs font-medium text-secondary-foreground">
+                      <ArrowUpRight className="h-3.5 w-3.5 text-destructive" /> Money out
+                    </span>
+                    <span className="text-xs font-semibold text-foreground">
+                      {formatCurrency(outflow)}
+                    </span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </MotionWidget>
         </MotionGrid>
+
 
         {/* ---------- Summary metrics ---------- */}
         <MotionGrid className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -279,8 +298,8 @@ const Dashboard = () => {
                     {item.title}
                   </CardTitle>
                   <span
-                    className={`flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 ${
-                      item.tone === "accent" ? "bg-accent/15 text-accent" : "bg-primary/15 text-primary"
+                    className={`flex h-9 w-9 items-center justify-center rounded-xl border border-border ${
+                      item.tone === "accent" ? "bg-accent/25 text-primary-glow-foreground" : "bg-primary/15 text-primary"
                     }`}
                   >
                     <item.icon className="h-4 w-4" />
@@ -295,14 +314,14 @@ const Dashboard = () => {
           ))}
         </MotionGrid>
 
-        {/* ---------- 2. 3D card display + quick transfer ---------- */}
-        <MotionGrid className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-5">
+        {/* ---------- 2. Card display + quick transfer ---------- */}
+        <MotionGrid className="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-5">
           <MotionWidget className="lg:col-span-3">
             <Card className="h-full">
               <CardHeader className="flex flex-row items-start justify-between space-y-0">
                 <div>
                   <CardTitle className="text-lg">Your Cards</CardTitle>
-                  <CardDescription>Click the card to reveal CVV and quick actions</CardDescription>
+                  <CardDescription>Manage the card linked to each account</CardDescription>
                 </div>
                 <Button variant="outline" size="sm" onClick={createAccount}>
                   <Plus className="h-4 w-4" />
@@ -311,14 +330,15 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="space-y-5">
                 {loading ? (
-                  <div className="h-56 animate-pulse rounded-3xl border border-white/10 bg-white/5" />
+                  <div className="h-56 animate-pulse rounded-2xl border border-border bg-secondary/50" />
                 ) : !selectedAccount ? (
-                  <div className="rounded-2xl border border-dashed border-white/15 p-10 text-center text-sm text-muted-foreground">
+                  <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
                     No accounts yet. Create your first account to generate a card.
                   </div>
                 ) : (
                   <>
-                    <Credit3DCard
+                    <AccountCard
+
                       holder={selectedAccount.account_type?.toUpperCase() ?? "SMARTBANK"}
                       accountNumber={selectedAccount.account_number}
                       accountType={selectedAccount.account_type}
@@ -342,7 +362,7 @@ const Dashboard = () => {
                             className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all ${
                               index === activeCard
                                 ? "border-primary/50 bg-primary/15 text-primary-glow"
-                                : "border-white/10 bg-white/5 text-muted-foreground hover:text-foreground"
+                                : "border-border bg-secondary/50 text-muted-foreground hover:text-foreground"
                             }`}
                           >
                             •••• {String(account.account_number).slice(-4)}
@@ -374,7 +394,7 @@ const Dashboard = () => {
                   ))}
                 </div>
 
-                <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="space-y-3 rounded-2xl border border-border bg-secondary/50 p-4">
                   <p className="text-[0.65rem] uppercase tracking-[0.28em] text-muted-foreground">
                     Accounts
                   </p>
@@ -396,7 +416,7 @@ const Dashboard = () => {
                             </p>
                           </div>
                         </div>
-                        <p className="text-sm font-semibold text-accent">
+                        <p className="text-sm font-semibold text-primary-glow">
                           {formatCurrency(Number(account.balance ?? 0))}
                         </p>
                       </div>
@@ -420,10 +440,10 @@ const Dashboard = () => {
                   </div>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-accent shadow-glow-emerald" /> Inflow
+                      <span className="h-2 w-2 rounded-full bg-accent " /> Inflow
                     </span>
                     <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-primary shadow-glow" /> Outflow
+                      <span className="h-2 w-2 rounded-full bg-primary" /> Outflow
                     </span>
                   </div>
                 </div>
@@ -459,7 +479,7 @@ const Dashboard = () => {
                     {[0, 1, 2].map((index) => (
                       <div
                         key={index}
-                        className="h-16 animate-pulse rounded-2xl border border-white/10 bg-white/5"
+                        className="h-16 animate-pulse rounded-2xl border border-border bg-secondary/50"
                       />
                     ))}
                   </div>
@@ -477,12 +497,12 @@ const Dashboard = () => {
                         initial={{ opacity: 0, y: 25 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.05 * index, duration: 0.4 }}
-                        className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-3.5 transition-colors hover:border-primary/30 hover:bg-primary/5"
+                        className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-secondary/50 p-3.5 transition-colors hover:border-primary/30 hover:bg-primary/5"
                       >
                         <div className="flex min-w-0 items-center gap-3">
                           <span
-                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 ${
-                              isCredit ? "bg-accent/15 text-accent" : "bg-destructive/15 text-destructive"
+                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border ${
+                              isCredit ? "bg-accent/25 text-primary-glow-foreground" : "bg-destructive/15 text-destructive"
                             }`}
                           >
                             {isCredit ? (
@@ -503,7 +523,7 @@ const Dashboard = () => {
                         </div>
                         <p
                           className={`shrink-0 text-sm font-semibold ${
-                            isCredit ? "text-accent" : "text-destructive"
+                            isCredit ? "text-primary-glow" : "text-destructive"
                           }`}
                         >
                           {isCredit ? "+" : "-"}

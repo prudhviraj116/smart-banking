@@ -268,7 +268,7 @@ const Profile = () => {
                     <Button
                       type="submit"
                       disabled={isLoading}
-                      className="bg-banking-gradient hover:shadow-glow"
+                      className="bg-banking-gradient"
                     >
                       {isLoading ? "Updating..." : "Update Profile"}
                     </Button>

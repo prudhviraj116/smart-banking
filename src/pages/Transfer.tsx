@@ -236,7 +236,7 @@ const Transfer = () => {
                   {/* Submit Button */}
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-banking-gradient hover:shadow-glow transition-all duration-300"
+                    className="w-full h-12 bg-banking-gradient transition-all duration-300"
                     disabled={isLoading}
                   >
                     {isLoading ? "Processing Transfer..." : "Transfer Funds"}
@@ -258,7 +258,7 @@ const Transfer = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-accent">
+                  <div className="text-2xl font-bold text-primary-glow">
                     {formatCurrency(selectedAccount.balance)}
                   </div>
                   <p className="text-sm text-muted-foreground capitalize">

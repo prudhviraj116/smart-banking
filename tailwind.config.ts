@@ -18,7 +18,12 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+				display: ['Outfit', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+			},
 			colors: {
+
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -68,14 +73,17 @@ export default {
 			backgroundImage: {
 				'banking-gradient': 'var(--banking-gradient)',
 				'success-gradient': 'var(--success-gradient)',
-				'glass-gradient': 'var(--glass-gradient)',
-				'metal-gradient': 'var(--metal-gradient)',
+				'glass-gradient': 'var(--surface-gradient)',
+				'surface-gradient': 'var(--surface-gradient)',
+				'chip-gradient': 'var(--chip-gradient)',
 			},
 			boxShadow: {
 				'card': 'var(--card-shadow)',
-				'glow': 'var(--glow-shadow)',
-				'glow-emerald': 'var(--glow-emerald)',
+				'card-hover': 'var(--card-shadow-hover)',
+				'glow': 'var(--card-shadow-hover)',
+				'glow-emerald': 'var(--card-shadow-hover)',
 			},
+
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
@@ -92,24 +100,25 @@ export default {
 				},
 				'float-slow': {
 					'0%, 100%': { transform: 'translate3d(0, 0, 0)' },
-					'50%': { transform: 'translate3d(0, -14px, 0)' }
+					'50%': { transform: 'translate3d(0, -6px, 0)' }
 				},
 				'pulse-glow': {
-					'0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
-					'50%': { opacity: '0.8', transform: 'scale(1.06)' }
+					'0%, 100%': { opacity: '0.5' },
+					'50%': { opacity: '0.75' }
 				},
 				'shimmer': {
-					'0%': { transform: 'translateX(-120%)' },
-					'100%': { transform: 'translateX(220%)' }
+					'0%': { opacity: '0.4' },
+					'100%': { opacity: '0.4' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'float-slow': 'float-slow 7s ease-in-out infinite',
-				'pulse-glow': 'pulse-glow 6s ease-in-out infinite',
-				'shimmer': 'shimmer 2.6s ease-in-out infinite'
+				'float-slow': 'float-slow 8s ease-in-out infinite',
+				'pulse-glow': 'pulse-glow 8s ease-in-out infinite',
+				'shimmer': 'none'
 			}
+
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
