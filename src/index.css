@@ -1,102 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Figtree:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================================
-   Smart Banking — Deep Obsidian luxury design system.
+   Smart Banking — Sage & Cream light design system.
+   Flat surfaces, soft sage greens, warm cream neutrals.
    All colors MUST be HSL.
    ============================================================ */
 
 @layer base {
   :root {
-    /* Deep Obsidian base (#090D16) */
-    --background: 220 42% 6%;
-    --foreground: 0 0% 100%;
+    /* Warm cream base (#F5F0E8) */
+    --background: 38 33% 93%;
+    --foreground: 110 14% 20%;
 
-    /* Glass surfaces */
-    --card: 222 40% 11%;
-    --card-foreground: 0 0% 100%;
+    /* Panels sit slightly lighter than the page */
+    --card: 40 40% 97%;
+    --card-foreground: 110 14% 20%;
 
-    --popover: 222 44% 9%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 40 40% 97%;
+    --popover-foreground: 110 14% 20%;
 
-    /* Neon Cyan #06B6D4 */
-    --primary: 189 94% 43%;
-    --primary-foreground: 220 42% 6%;
-    --primary-glow: 187 92% 60%;
+    /* Sage green (#7D9B76) */
+    --primary: 111 15% 54%;
+    --primary-foreground: 40 40% 97%;
+    --primary-glow: 108 20% 45%;
 
-    --secondary: 220 26% 16%;
-    --secondary-foreground: 0 0% 100%;
+    /* Pale sage (#DCE5D4) */
+    --secondary: 100 26% 87%;
+    --secondary-foreground: 110 16% 26%;
 
-    --muted: 220 26% 14%;
-    /* Light silver #94A3B8 */
-    --muted-foreground: 215 20% 65%;
+    --muted: 96 20% 90%;
+    --muted-foreground: 110 10% 42%;
 
-    /* Neon Emerald #10B981 */
-    --accent: 160 84% 39%;
-    --accent-foreground: 220 42% 6%;
-    --accent-glow: 158 80% 52%;
+    /* Mid sage (#A8C0A0) */
+    --accent: 108 21% 69%;
+    --accent-foreground: 110 20% 22%;
+    --accent-glow: 108 24% 52%;
 
-    --destructive: 0 84% 62%;
-    --destructive-foreground: 0 0% 100%;
+    /* Muted clay for warnings / negatives */
+    --destructive: 12 52% 48%;
+    --destructive-foreground: 40 40% 97%;
 
-    --border: 220 22% 22%;
-    --input: 220 24% 18%;
-    --ring: 189 94% 43%;
+    --border: 100 18% 82%;
+    --input: 100 20% 88%;
+    --ring: 111 15% 54%;
 
-    --banking-gradient: linear-gradient(135deg, hsl(189 94% 43%) 0%, hsl(160 84% 39%) 100%);
-    --success-gradient: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(158 80% 52%) 100%);
-    --glass-gradient: linear-gradient(
-      145deg,
-      hsl(220 30% 18% / 0.72) 0%,
-      hsl(222 42% 9% / 0.72) 100%
-    );
-    --metal-gradient: linear-gradient(
-      120deg,
-      hsl(45 80% 72%) 0%,
-      hsl(40 40% 92%) 28%,
-      hsl(45 78% 62%) 52%,
-      hsl(38 35% 88%) 78%,
-      hsl(45 70% 68%) 100%
-    );
+    --banking-gradient: linear-gradient(135deg, hsl(111 15% 54%) 0%, hsl(108 22% 46%) 100%);
+    --success-gradient: linear-gradient(135deg, hsl(108 21% 62%) 0%, hsl(111 18% 48%) 100%);
+    --surface-gradient: linear-gradient(160deg, hsl(40 40% 98%) 0%, hsl(38 30% 94%) 100%);
+    --chip-gradient: linear-gradient(120deg, hsl(100 22% 78%) 0%, hsl(96 26% 88%) 50%, hsl(100 20% 74%) 100%);
 
-    --card-shadow: 0 24px 60px -24px hsl(220 60% 2% / 0.9), 0 0 0 1px hsl(0 0% 100% / 0.06);
-    --glow-shadow: 0 0 44px hsl(189 94% 43% / 0.28);
-    --glow-emerald: 0 0 44px hsl(160 84% 39% / 0.28);
+    --card-shadow: 0 1px 2px hsl(110 14% 20% / 0.04), 0 8px 24px -16px hsl(110 14% 20% / 0.16);
+    --card-shadow-hover: 0 2px 4px hsl(110 14% 20% / 0.05), 0 14px 32px -18px hsl(110 14% 20% / 0.22);
 
-    --radius: 0.9rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 222 44% 8%;
-    --sidebar-foreground: 215 20% 78%;
-    --sidebar-primary: 189 94% 43%;
-    --sidebar-primary-foreground: 220 42% 6%;
-    --sidebar-accent: 220 26% 16%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 220 22% 20%;
-    --sidebar-ring: 189 94% 43%;
-  }
-
-  /* The app is dark-mode-first: the dark class mirrors the root palette. */
-  .dark {
-    --background: 220 42% 6%;
-    --foreground: 0 0% 100%;
-    --card: 222 40% 11%;
-    --card-foreground: 0 0% 100%;
-    --popover: 222 44% 9%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 189 94% 43%;
-    --primary-foreground: 220 42% 6%;
-    --secondary: 220 26% 16%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 220 26% 14%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 160 84% 39%;
-    --accent-foreground: 220 42% 6%;
-    --destructive: 0 84% 62%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 22% 22%;
-    --input: 220 24% 18%;
-    --ring: 189 94% 43%;
+    --sidebar-background: 40 40% 97%;
+    --sidebar-foreground: 110 12% 32%;
+    --sidebar-primary: 111 15% 54%;
+    --sidebar-primary-foreground: 40 40% 97%;
+    --sidebar-accent: 100 26% 90%;
+    --sidebar-accent-foreground: 110 16% 26%;
+    --sidebar-border: 100 18% 84%;
+    --sidebar-ring: 111 15% 54%;
   }
 }
 
@@ -106,16 +75,26 @@
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "cv02", "cv03", "cv04", "ss01";
+    font-family: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.01em;
   }
 
   ::selection {
-    background: hsl(var(--primary) / 0.28);
+    background: hsl(var(--accent) / 0.45);
   }
 
   ::-webkit-scrollbar {
@@ -126,86 +105,65 @@
     background: hsl(var(--background));
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(220 20% 22%);
+    background: hsl(var(--border));
     border-radius: 999px;
     border: 2px solid hsl(var(--background));
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary) / 0.5);
+    background: hsl(var(--primary) / 0.6);
   }
 }
 
 @layer components {
-  /* Frosted glass surface used across every panel */
+  /* Flat card surface used across every panel */
   .glass-panel {
-    @apply relative rounded-2xl border border-white/10 bg-card/60 backdrop-blur-xl;
-    background-image: var(--glass-gradient);
+    @apply relative rounded-2xl border border-border bg-card;
     box-shadow: var(--card-shadow);
   }
 
   .glass-panel-hover {
-    @apply transition-all duration-300;
+    @apply transition-all duration-200;
   }
   .glass-panel-hover:hover {
-    border-color: hsl(var(--primary) / 0.35);
-    box-shadow: var(--card-shadow), var(--glow-shadow);
-    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: var(--card-shadow-hover);
   }
 
-  /* Tactile 3D button surface */
+  /* Flat, calm button surface */
   .btn-3d {
-    @apply relative overflow-hidden border-t border-white/30 transition-all duration-200;
-    box-shadow:
-      0 10px 24px -8px hsl(var(--primary) / 0.45),
-      inset 0 1px 0 hsl(0 0% 100% / 0.25),
-      inset 0 -2px 6px hsl(220 60% 4% / 0.4);
+    @apply relative overflow-hidden transition-colors duration-200;
   }
-  .btn-3d:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      0 16px 32px -10px hsl(var(--primary) / 0.55),
-      inset 0 1px 0 hsl(0 0% 100% / 0.3);
-  }
-  .btn-3d:active {
-    transform: translateY(0) scale(0.95);
+
+  .surface-soft {
+    @apply rounded-2xl border border-border bg-secondary/60;
   }
 
   .text-gradient-primary {
-    background: var(--banking-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: hsl(var(--primary-glow));
   }
 
-  .metal-chip {
-    background-image: var(--metal-gradient);
-    box-shadow:
-      inset 0 1px 1px hsl(0 0% 100% / 0.6),
-      inset 0 -2px 4px hsl(30 40% 20% / 0.5),
-      0 4px 10px hsl(220 60% 2% / 0.6);
+  .chip-plate {
+    background-image: var(--chip-gradient);
+    border: 1px solid hsl(var(--border));
   }
 
   .embossed-digits {
-    color: hsl(0 0% 100% / 0.95);
-    text-shadow:
-      0 1px 0 hsl(0 0% 100% / 0.45),
-      0 -1px 1px hsl(220 60% 2% / 0.8),
-      0 0 18px hsl(var(--primary) / 0.55);
+    color: hsl(var(--foreground));
+  }
+
+  .stat-label {
+    @apply text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground;
   }
 }
 
 @layer utilities {
   .perspective-1200 {
-    perspective: 1200px;
+    perspective: none;
   }
   .preserve-3d {
-    transform-style: preserve-3d;
+    transform-style: flat;
   }
   .backface-hidden {
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-  .rotate-y-180 {
-    transform: rotateY(180deg);
+    backface-visibility: visible;
   }
 }
