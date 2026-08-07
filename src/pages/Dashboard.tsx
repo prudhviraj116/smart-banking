@@ -299,7 +299,7 @@ const Dashboard = () => {
                   </CardTitle>
                   <span
                     className={`flex h-9 w-9 items-center justify-center rounded-xl border border-border ${
-                      item.tone === "accent" ? "bg-accent/15 text-accent" : "bg-primary/15 text-primary"
+                      item.tone === "accent" ? "bg-accent/25 text-primary-glow-foreground" : "bg-primary/15 text-primary"
                     }`}
                   >
                     <item.icon className="h-4 w-4" />
@@ -416,7 +416,7 @@ const Dashboard = () => {
                             </p>
                           </div>
                         </div>
-                        <p className="text-sm font-semibold text-accent">
+                        <p className="text-sm font-semibold text-primary-glow">
                           {formatCurrency(Number(account.balance ?? 0))}
                         </p>
                       </div>
@@ -502,7 +502,7 @@ const Dashboard = () => {
                         <div className="flex min-w-0 items-center gap-3">
                           <span
                             className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border ${
-                              isCredit ? "bg-accent/15 text-accent" : "bg-destructive/15 text-destructive"
+                              isCredit ? "bg-accent/25 text-primary-glow-foreground" : "bg-destructive/15 text-destructive"
                             }`}
                           >
                             {isCredit ? (
@@ -523,7 +523,7 @@ const Dashboard = () => {
                         </div>
                         <p
                           className={`shrink-0 text-sm font-semibold ${
-                            isCredit ? "text-accent" : "text-destructive"
+                            isCredit ? "text-primary-glow" : "text-destructive"
                           }`}
                         >
                           {isCredit ? "+" : "-"}

@@ -140,7 +140,7 @@ const Transactions = () => {
   const getTransactionColor = (transaction: any) => {
     const isCredit = transaction.transaction_type === "deposit" || 
       (transaction.transaction_type === "transfer" && selectedAccount === transaction.to_account_id);
-    return isCredit ? "text-accent" : "text-destructive";
+    return isCredit ? "text-primary-glow" : "text-destructive";
   };
 
   const getTransactionBg = (transaction: any) => {

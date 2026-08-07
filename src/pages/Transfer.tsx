@@ -258,7 +258,7 @@ const Transfer = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-accent">
+                  <div className="text-2xl font-bold text-primary-glow">
                     {formatCurrency(selectedAccount.balance)}
                   </div>
                   <p className="text-sm text-muted-foreground capitalize">
