@@ -28,7 +28,7 @@ const tooltipStyle = {
   borderRadius: "0.75rem",
   color: "hsl(var(--foreground))",
   fontSize: "0.75rem",
-  boxShadow: "0 12px 28px -18px hsl(110 14% 20% / 0.35)",
+  boxShadow: "var(--card-shadow-hover)",
 } as const;
 
 
